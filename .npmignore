@@ -1,0 +1,17 @@
+src
+tests
+node_modules
+coverage
+.repoproof
+.git
+.github
+.vscode
+*.ts
+!dist/**/*.ts
+vitest.config.ts
+tsup.config.ts
+tsconfig.json
+.eslintrc.json
+.prettierrc
+.editorconfig
+.gitignore

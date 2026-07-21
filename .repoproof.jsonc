@@ -1,0 +1,37 @@
+{
+  // Minimum score required to pass (0-100)
+  "minScore": 70,
+
+  // Maximum file size in bytes to scan (files larger than this are skipped)
+  "maxFileSize": 1048576,
+
+  // Maximum number of files to scan (scanning stops when limit is reached)
+  "maxFiles": 10000,
+
+  // Maximum total bytes to scan across all files
+  "maxTotalBytes": 524288000,
+
+  // Maximum directory depth to traverse
+  "maxDirectoryDepth": 50,
+
+  // Fail condition: "error" fails on any error, "warning" fails on errors or warnings
+  "failOn": "error",
+
+  // Directories or files to ignore (relative to project root)
+  "ignoredPaths": ["dist", "build", ".git", "node_modules"],
+
+  // Rule IDs to disable entirely
+  "disabledRules": [],
+
+  // Override severity for specific rules (values: "error", "warning", "info")
+  "severityOverrides": {},
+
+  // Override score penalty for specific rules
+  "penaltyOverrides": {},
+
+  // Only scan files whose paths begin with these prefixes (empty = scan all)
+  "includedPaths": [],
+
+  // Exclude files whose paths begin with these prefixes
+  "excludedPaths": []
+}

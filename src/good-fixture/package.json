@@ -1,0 +1,17 @@
+{
+  "name": "good-fixture",
+  "version": "1.0.0",
+  "description": "A well-structured project for testing RepoProof",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "eslint src/"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/good-fixture"
+  }
+}

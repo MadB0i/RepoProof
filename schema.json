@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/anomalyco/repoproof/main/schema.json",
+  "title": "RepoProof Configuration",
+  "description": "Configuration schema for RepoProof repository quality auditor",
+  "type": "object",
+  "properties": {
+    "ignoredPaths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Additional glob patterns to ignore beyond built-in defaults (node_modules, .git, dist, build, etc.)"
+    },
+    "disabledRules": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Rule IDs to disable entirely. Findings from disabled rules are not included in the report."
+    },
+    "severityOverrides": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": ["error", "warning", "info"]
+      },
+      "description": "Override severity for specific rules. Values must be 'error', 'warning', or 'info'.",
+      "examples": [{ "todo-fixme": "error" }]
+    },
+    "penaltyOverrides": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "description": "Override score penalty for specific rules. Values must be non-negative integers.",
+      "examples": [{ "empty-function": 1 }]
+    },
+    "minScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Minimum passing score (0-100). Scan exits with code 1 if score is below this threshold.",
+      "default": 70
+    },
+    "maxFileSize": {
+      "type": "integer",
+      "minimum": 1024,
+      "description": "Maximum file size in bytes to scan. Files larger than this are skipped. Default: 1048576 (1 MB)."
+    },
+    "includedPaths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Only scan files whose relative paths begin with one of these prefixes. Empty array means scan all files."
+    },
+    "excludedPaths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Exclude files whose relative paths begin with one of these prefixes."
+    },
+    "maxFiles": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum number of files to scan. Scanning stops when this limit is reached. Default: 10000."
+    },
+    "maxTotalBytes": {
+      "type": "integer",
+      "minimum": 1024,
+      "description": "Maximum total bytes to scan across all files. Default: 524288000 (500 MB)."
+    },
+    "maxDirectoryDepth": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum directory depth to traverse. Default: 50."
+    },
+    "failOn": {
+      "enum": ["error", "warning"],
+      "description": "Minimum severity to cause a non-zero exit. 'error' fails on errors only. 'warning' fails on errors or warnings.",
+      "default": "error"
+    }
+  },
+  "additionalProperties": false
+}
