@@ -147,12 +147,12 @@ Create a `.repoproof.json` or `.repoproof.jsonc` file in your project root:
 
 ## Exit Codes
 
-| Exit Code | Condition                                  |
-| --------- | ------------------------------------------ |
-| 0         | Scan passed (score ≥ min, no threshold hits) |
+| Exit Code | Condition                                                                |
+| --------- | ------------------------------------------------------------------------ |
+| 0         | Scan passed (score ≥ min, no threshold hits)                             |
 | 1         | Score below `--min-score`, or errors/warnings found matching `--fail-on` |
-| 1         | Invalid path, config, format, or rule ID   |
-| 1         | Cannot write output file                   |
+| 1         | Invalid path, config, format, or rule ID                                 |
+| 1         | Cannot write output file                                                 |
 
 ## CI Integration
 

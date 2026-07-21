@@ -21,7 +21,16 @@ export interface JsonReport {
 }
 
 function redactReport(report: ScanReport): ScanReport {
-  const redacted = { ...report, findings: report.findings.map((f) => ({ ...f, evidence: f.evidence.map((e) => ({ ...e, snippet: e.snippet ? redactSnippet(e.snippet) : e.snippet })) })) };
+  const redacted = {
+    ...report,
+    findings: report.findings.map((f) => ({
+      ...f,
+      evidence: f.evidence.map((e) => ({
+        ...e,
+        snippet: e.snippet ? redactSnippet(e.snippet) : e.snippet,
+      })),
+    })),
+  };
   return redacted;
 }
 
