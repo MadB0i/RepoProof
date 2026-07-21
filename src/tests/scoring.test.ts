@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { resolve, join } from "node:path";
 import { calculateScore, runRules, getResultsBySeverity } from "../engine/rule-runner.js";
 import type {
   RuleResult,
@@ -9,6 +10,9 @@ import type {
   Category,
 } from "../types.js";
 import { calculateGrade } from "../types.js";
+
+const normalizeMockPath = (p: string): string => resolve(p).replace(/\\/g, "/");
+const TEST_ROOT = normalizeMockPath("virtual-test-repo");
 
 function makeResult(
   overrides: Partial<RuleResult> & { category: Category; scorePenalty: number },
@@ -161,7 +165,7 @@ describe("getResultsBySeverity", () => {
 
 describe("runRules", () => {
   const makeScannedFile = (relativePath: string, content: string): ScannedFile => ({
-    path: "D:\\Projects\\RepoProof\\" + relativePath,
+    path: join(TEST_ROOT, relativePath),
     relativePath,
     content,
     size: Buffer.byteLength(content, "utf-8"),

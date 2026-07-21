@@ -1,10 +1,14 @@
 import { describe, it, expect } from "vitest";
+import { resolve, join } from "node:path";
 import type { ScannedFile, ScanContext, RepoProofConfig } from "../types.js";
 import { validateConfig } from "../config/config-loader.js";
 
+const normalizeMockPath = (p: string): string => resolve(p).replace(/\\/g, "/");
+const TEST_ROOT = normalizeMockPath("virtual-test-repo");
+
 function makeFile(relativePath: string, content: string): ScannedFile {
   return {
-    path: "D:\\Projects\\RepoProof\\" + relativePath,
+    path: join(TEST_ROOT, relativePath),
     relativePath,
     content,
     size: Buffer.byteLength(content, "utf-8"),

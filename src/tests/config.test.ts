@@ -1,4 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { resolve, join, dirname } from "node:path";
+
+const normalizeMockPath = (p: string): string => resolve(p).replace(/\\/g, "/");
+const TEST_ROOT = normalizeMockPath("virtual-test-repo");
+const repoPath = (...segments: string[]) => normalizeMockPath(join(TEST_ROOT, ...segments));
 
 const mockFs = {
   files: new Map<string, string>(),
@@ -8,7 +13,7 @@ const mockFs = {
   },
 
   setFile(path: string, content: string) {
-    this.files.set(path.replace(/\\/g, "/"), content);
+    this.files.set(normalizeMockPath(path), content);
   },
 };
 
@@ -18,12 +23,12 @@ vi.mock("node:fs", async (importOriginal) => {
     ...actual,
     default: actual,
     readFileSync: vi.fn((path: string, _encoding?: string) => {
-      const n = path.replace(/\\/g, "/");
+      const n = normalizeMockPath(path);
       if (mockFs.files.has(n)) return mockFs.files.get(n);
       throw new Error(`ENOENT: ${n}`);
     }),
     existsSync: vi.fn((path: string) => {
-      return mockFs.files.has(path.replace(/\\/g, "/"));
+      return mockFs.files.has(normalizeMockPath(path));
     }),
   };
 });
@@ -44,18 +49,18 @@ describe("loadConfig", () => {
 
   it("should load and parse valid JSON config", () => {
     mockFs.setFile(
-      "D:/Projects/RepoProof/.repoproof.json",
+      repoPath(".repoproof.json"),
       JSON.stringify({ minScore: 80, maxFileSize: 500000 }),
     );
 
-    const config = loadConfig("D:/Projects/RepoProof/.repoproof.json");
+    const config = loadConfig(repoPath(".repoproof.json"));
     expect(config.minScore).toBe(80);
     expect(config.maxFileSize).toBe(500000);
   });
 
   it("should load and parse JSONC config with comments", () => {
     mockFs.setFile(
-      "D:/Projects/RepoProof/.repoproof.jsonc",
+      repoPath(".repoproof.jsonc"),
       [
         "{",
         "  // This is a comment",
@@ -66,30 +71,28 @@ describe("loadConfig", () => {
       ].join("\n"),
     );
 
-    const config = loadConfig("D:/Projects/RepoProof/.repoproof.jsonc");
+    const config = loadConfig(repoPath(".repoproof.jsonc"));
     expect(config.minScore).toBe(85);
     expect(config.maxFileSize).toBe(200000);
   });
 
   it("should handle trailing commas in JSONC", () => {
     mockFs.setFile(
-      "D:/Projects/RepoProof/.repoproof.jsonc",
+      repoPath(".repoproof.jsonc"),
       '{\n  "minScore": 75,\n  "maxFileSize": 300000,\n}',
     );
 
-    const config = loadConfig("D:/Projects/RepoProof/.repoproof.jsonc");
+    const config = loadConfig(repoPath(".repoproof.jsonc"));
     expect(config.minScore).toBe(75);
   });
 
   it("should throw for missing config file", () => {
-    expect(() => loadConfig("D:/Projects/RepoProof/nonexistent.json")).toThrow(
-      "Configuration file not found",
-    );
+    expect(() => loadConfig(repoPath("nonexistent.json"))).toThrow("Configuration file not found");
   });
 
   it("should throw for invalid JSON", () => {
-    mockFs.setFile("D:/Projects/RepoProof/.repoproof.json", "{ invalid json }");
-    expect(() => loadConfig("D:/Projects/RepoProof/.repoproof.json")).toThrow("Invalid JSON");
+    mockFs.setFile(repoPath(".repoproof.json"), "{ invalid json }");
+    expect(() => loadConfig(repoPath(".repoproof.json"))).toThrow("Invalid JSON");
   });
 });
 
@@ -181,28 +184,29 @@ describe("validateConfig", () => {
 
 describe("findConfig", () => {
   it("should find .repoproof.json", () => {
-    mockFs.setFile("D:/Projects/RepoProof/.repoproof.json", "{}");
+    mockFs.setFile(repoPath(".repoproof.json"), "{}");
 
-    const result = findConfig("D:/Projects/RepoProof");
-    expect(result!.replace(/\\/g, "/")).toBe("D:/Projects/RepoProof/.repoproof.json");
+    const result = findConfig(TEST_ROOT);
+    expect(result!.replace(/\\/g, "/")).toBe(repoPath(".repoproof.json"));
   });
 
   it("should find .repoproof.jsonc", () => {
-    mockFs.setFile("D:/Projects/RepoProof/.repoproof.jsonc", "{}");
+    mockFs.setFile(repoPath(".repoproof.jsonc"), "{}");
 
-    const result = findConfig("D:/Projects/RepoProof");
-    expect(result!.replace(/\\/g, "/")).toBe("D:/Projects/RepoProof/.repoproof.jsonc");
+    const result = findConfig(TEST_ROOT);
+    expect(result!.replace(/\\/g, "/")).toBe(repoPath(".repoproof.jsonc"));
   });
 
   it("should return null when no config file exists", () => {
-    const result = findConfig("D:/Projects/RepoProof");
+    const result = findConfig(TEST_ROOT);
     expect(result).toBeNull();
   });
 
   it("should search parent directories", () => {
-    mockFs.setFile("D:/Projects/.repoproof.json", "{}");
+    const parentDir = dirname(TEST_ROOT);
+    mockFs.setFile(normalizeMockPath(join(parentDir, ".repoproof.json")), "{}");
 
-    const result = findConfig("D:/Projects/RepoProof/src");
-    expect(result!.replace(/\\/g, "/")).toBe("D:/Projects/.repoproof.json");
+    const result = findConfig(join(TEST_ROOT, "src"));
+    expect(result!.replace(/\\/g, "/")).toBe(normalizeMockPath(join(parentDir, ".repoproof.json")));
   });
 });
