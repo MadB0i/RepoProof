@@ -11,13 +11,16 @@
     "code-review",
     "quality-gate"
   ],
-  "homepage": "https://github.com/anomalyco/repoproof#readme",
+  "homepage": "https://github.com/MadB0i/RepoProof#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anomalyco/repoproof.git"
+    "url": "git+https://github.com/MadB0i/RepoProof.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MadB0i/RepoProof/issues"
   },
   "license": "MIT",
-  "author": "RepoProof Contributors",
+  "author": "MadB0i",
   "type": "module",
   "exports": {
     ".": {

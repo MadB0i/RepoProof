@@ -12,7 +12,7 @@ Configuration files are discovered by walking up from the scanned directory to t
 
 ```jsonc
 {
-  "$schema": "https://raw.githubusercontent.com/anomalyco/repoproof/main/schema.json",
+  "$schema": "https://raw.githubusercontent.com/MadB0i/RepoProof/main/schema.json",
   "minScore": 70,
   "maxFileSize": 1048576,
   "failOn": "error",
@@ -60,14 +60,14 @@ If no configuration file is found, RepoProof uses:
 A JSON Schema is available for IDE autocompletion and validation:
 
 ```
-https://raw.githubusercontent.com/anomalyco/repoproof/main/schema.json
+https://raw.githubusercontent.com/MadB0i/RepoProof/main/schema.json
 ```
 
 Reference it in your configuration file:
 
 ```jsonc
 {
-  "$schema": "https://raw.githubusercontent.com/anomalyco/repoproof/main/schema.json",
+  "$schema": "https://raw.githubusercontent.com/MadB0i/RepoProof/main/schema.json",
 }
 ```
 

@@ -193,7 +193,7 @@ export function generateSarifReport(report: ScanReport, options?: SarifOptions):
           driver: {
             name: "RepoProof",
             version: report.version,
-            informationUri: "https://github.com/anomalyco/repoproof",
+            informationUri: "https://github.com/MadB0i/RepoProof",
             rules,
           },
         },

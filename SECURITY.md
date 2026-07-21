@@ -13,7 +13,7 @@ The only network-adjacent operation is the `$schema` URL in configuration files,
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in RepoProof, please report it by [opening an issue](https://github.com/anomalyco/repoproof/issues). We will respond promptly and work to address verified vulnerabilities.
+If you discover a security vulnerability in RepoProof, please report it by [opening an issue](https://github.com/MadB0i/RepoProof/issues). We will respond promptly and work to address verified vulnerabilities.
 
 Please do **not** submit vulnerabilities involving hardcoded secrets found by RepoProof in your own repositories — that is the intended function of the tool. Instead, remove those secrets and rotate any compromised credentials.
 

@@ -37,7 +37,7 @@ function redactReport(report: ScanReport): ScanReport {
 export function generateJsonReport(report: ScanReport): string {
   const redacted = redactReport(report);
   const jsonReport: JsonReport = {
-    $schema: "https://raw.githubusercontent.com/anomalyco/repoproof/main/schemas/report-v1.json",
+    $schema: "https://raw.githubusercontent.com/MadB0i/RepoProof/main/schemas/report-v1.json",
     version: redacted.version,
     timestamp: redacted.timestamp,
     score: redacted.score,
