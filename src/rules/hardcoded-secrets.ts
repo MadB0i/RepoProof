@@ -39,6 +39,8 @@ const SECRET_PATTERNS: Array<{ pattern: RegExp; description: string }> = [
   },
 ];
 
+const KNOWN_PLACEHOLDERS = /\b(YOUR_API_KEY_HERE|example-token|REDACTED)\b/;
+
 const MAX_PENALTY = 30;
 const PENALTY_PER_FINDING = 10;
 
@@ -84,6 +86,8 @@ const rule: Rule = {
             if (findings.length >= MAX_FINDINGS) break;
 
             const lineNo = file.content.substring(0, m.index).split("\n").length;
+            const line = file.content.split("\n")[lineNo - 1] || "";
+            if (KNOWN_PLACEHOLDERS.test(line)) continue;
             const rawSnippet = m[0].substring(0, 120);
             const snippet = redactSnippet(rawSnippet);
 

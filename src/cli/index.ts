@@ -73,7 +73,7 @@ async function scanAction(scanPath: string | undefined, options: GlobalOptions) 
 
   const files = scanDirectory(resolvedPath, config);
 
-  const context = createScanContext(files, config);
+  const context = createScanContext(files, config, resolvedPath);
 
   const findings = await runRules(rules, context);
 

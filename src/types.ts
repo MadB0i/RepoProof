@@ -106,6 +106,29 @@ export interface ScanReport {
   };
 }
 
+export const SOURCE_CODE_EXTENSIONS = new Set([
+  ".ts",
+  ".tsx",
+  ".mts",
+  ".cts",
+  ".js",
+  ".jsx",
+  ".mjs",
+  ".cjs",
+  ".py",
+  ".rs",
+  ".go",
+  ".java",
+  ".rb",
+  ".php",
+  ".cs",
+  ".kt",
+  ".swift",
+  ".sh",
+  ".bash",
+  ".zsh",
+]);
+
 export interface OutputFormat {
   format: "text" | "json" | "markdown" | "html" | "sarif";
   outputPath?: string;

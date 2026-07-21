@@ -4,7 +4,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    include: ["src/tests/**/*.test.ts"],
+    include: ["src/tests/**/*.test.ts", "src/**/*.test.ts"],
+    exclude: ["node_modules/**", "dist/**", "src/bad-fixture/**", "src/good-fixture/**"],
     testTimeout: 30000,
     hookTimeout: 30000,
   },

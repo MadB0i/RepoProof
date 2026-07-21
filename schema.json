@@ -21,7 +21,7 @@
         "enum": ["error", "warning", "info"]
       },
       "description": "Override severity for specific rules. Values must be 'error', 'warning', or 'info'.",
-      "examples": [{ "todo-fixme": "error" }]
+      "examples": [{ "empty-function": "error" }]
     },
     "penaltyOverrides": {
       "type": "object",

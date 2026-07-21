@@ -1,0 +1,15 @@
+{
+  "minScore": 90,
+  "failOn": "error",
+  "excludedPaths": [
+    "src/bad-fixture/",
+    "src/good-fixture/",
+    "src/tests/",
+    "src/rules/",
+    "src/reporters/",
+    "docs/",
+    "scripts/",
+    ".repoproof/",
+    "RELEASE-EVIDENCE.md"
+  ]
+}

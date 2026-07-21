@@ -1,4 +1,4 @@
-import { Rule, RuleResult, ScanContext } from "../types.js";
+import { Rule, RuleResult, ScanContext, SOURCE_CODE_EXTENSIONS } from "../types.js";
 
 const EMPTY_CATCH_PATTERNS = [
   // catch(e) {}
@@ -43,6 +43,8 @@ const rule: Rule = {
 
       for (const file of context.files) {
         if (totalPenalty >= MAX_PENALTY) break;
+        const ext = file.relativePath.substring(file.relativePath.lastIndexOf("."));
+        if (!SOURCE_CODE_EXTENSIONS.has(ext)) continue;
 
         const cleaned = stripStrings(file.content);
 

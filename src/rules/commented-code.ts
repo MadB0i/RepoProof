@@ -1,4 +1,4 @@
-import { Rule, RuleResult, ScanContext } from "../types.js";
+import { Rule, RuleResult, ScanContext, SOURCE_CODE_EXTENSIONS } from "../types.js";
 
 const MAX_PENALTY = 10;
 const PENALTY_PER_BLOCK = 3;
@@ -77,6 +77,8 @@ const rule: Rule = {
 
       for (const file of context.files) {
         if (totalPenalty >= MAX_PENALTY) break;
+        const ext = file.relativePath.substring(file.relativePath.lastIndexOf("."));
+        if (!SOURCE_CODE_EXTENSIONS.has(ext)) continue;
 
         const blocks = findCommentedBlocks(file.content);
         for (const block of blocks) {

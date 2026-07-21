@@ -54,6 +54,9 @@ const rule: Rule = {
 
       if (relevantConfigs.length === 0) return [];
 
+      // Check if lockfile is present (via scanned files or project type detection)
+      if (pt.hasLockfile) return [];
+
       const hasAnyLockfile = context.files.some((f) => {
         const rp = f.relativePath;
         return relevantConfigs.some((entry) =>

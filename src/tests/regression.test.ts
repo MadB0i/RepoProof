@@ -529,6 +529,74 @@ describe("REGRESSION-9: Known valid scripts pass clean", () => {
   });
 });
 
+describe("REGRESSION-11: Not-implemented rule ignores Markdown prose", () => {
+  it("should not report 'not implemented' in Markdown prose", async () => {
+    const { rule } = await import("../rules/not-implemented.js");
+    const files = [makeFile("docs/README.md", "This feature is not implemented yet.")];
+    const results = await rule.run(makeContext(files));
+    expect(results.filter((r) => r.id === "not-implemented")).toHaveLength(0);
+  });
+
+  it("should still report 'not implemented' in TypeScript source", async () => {
+    const { rule } = await import("../rules/not-implemented.js");
+    const files = [makeFile("src/index.ts", 'throw new Error("not implemented");')];
+    const results = await rule.run(makeContext(files));
+    const filtered = results.filter((r) => r.id === "not-implemented");
+    expect(filtered.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("REGRESSION-12: Recognized placeholder secrets not reported", () => {
+  it("should not report YOUR_API_KEY_HERE as a secret", async () => {
+    const { rule } = await import("../rules/hardcoded-secrets.js");
+    const files = [makeFile("docs/README.md", 'const apiKey = "YOUR_API_KEY_HERE";')];
+    const results = await rule.run(makeContext(files));
+    expect(results.filter((r) => r.id === "hardcoded-secrets")).toHaveLength(0);
+  });
+
+  it("should not report example-token as a secret", async () => {
+    const { rule } = await import("../rules/hardcoded-secrets.js");
+    const files = [makeFile("docs/README.md", 'const token = "example-token";')];
+    const results = await rule.run(makeContext(files));
+    expect(results.filter((r) => r.id === "hardcoded-secrets")).toHaveLength(0);
+  });
+
+  it("should not report REDACTED as a secret", async () => {
+    const { rule } = await import("../rules/hardcoded-secrets.js");
+    const files = [makeFile("docs/README.md", 'const password = "REDACTED";')];
+    const results = await rule.run(makeContext(files));
+    expect(results.filter((r) => r.id === "hardcoded-secrets")).toHaveLength(0);
+  });
+
+  it("should still report real-looking secrets in documentation", async () => {
+    const { rule } = await import("../rules/hardcoded-secrets.js");
+    const files = [
+      makeFile("docs/README.md", 'const apiKey = "sk-live-abcdefghijklmnopqrstuvwxyz";'),
+    ];
+    const results = await rule.run(makeContext(files));
+    const filtered = results.filter((r) => r.id === "hardcoded-secrets");
+    expect(filtered.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("REGRESSION-13: CI config exclusion not hardcoded", () => {
+  it("should detect findings in bad-fixture files when no CI config is used", async () => {
+    const { rule } = await import("../rules/hardcoded-secrets.js");
+    const files = [makeFile("src/bad-fixture/src/helper.js", 'const password = "P@ssw0rd123!";')];
+    const results = await rule.run(makeContext(files));
+    const filtered = results.filter((r) => r.id === "hardcoded-secrets");
+    expect(filtered.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("should not exclude bad-fixture by default in not-implemented rule", async () => {
+    const { rule } = await import("../rules/not-implemented.js");
+    const files = [makeFile("src/bad-fixture/src/index.js", "throw new Error('Not implemented');")];
+    const results = await rule.run(makeContext(files));
+    const filtered = results.filter((r) => r.id === "not-implemented");
+    expect(filtered.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
 describe("REGRESSION-10: Rule edge cases", () => {
   it("should handle empty file list gracefully for all rules", async () => {
     const results = await Promise.all([

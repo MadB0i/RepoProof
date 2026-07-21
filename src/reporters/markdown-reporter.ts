@@ -29,7 +29,7 @@ export function generateMarkdownReport(report: ScanReport): string {
   lines.push(`# RepoProof Quality Audit`);
   lines.push("");
 
-  // Badge placeholder
+  // Badge status color
   const badgeColor =
     report.grade === "A"
       ? "brightgreen"

@@ -1,4 +1,4 @@
-import { Rule, RuleResult, ScanContext } from "../types.js";
+import { Rule, RuleResult, ScanContext, SOURCE_CODE_EXTENSIONS } from "../types.js";
 
 const PATTERNS = [
   // throw new Error("not implemented"), throw new Error("TODO"), etc.
@@ -31,6 +31,8 @@ const rule: Rule = {
 
       for (const file of context.files) {
         if (totalPenalty >= MAX_PENALTY) break;
+        const ext = file.relativePath.substring(file.relativePath.lastIndexOf("."));
+        if (!SOURCE_CODE_EXTENSIONS.has(ext)) continue;
         const fileFindings: Array<{ line: number; snippet: string; match: string }> = [];
 
         for (const pattern of PATTERNS) {

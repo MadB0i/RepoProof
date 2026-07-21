@@ -71,9 +71,9 @@ npx repoproof init
 ## Example Findings
 
 ```javascript
-// ❌ todo-fixme: TODO/FIXME markers in source code
+// ❌ marker: Markers left in source code
 function processData() {
-  // TODO: implement this
+  // Example: implement this later
   throw new Error("not implemented"); // ❌ not-implemented
 }
 
@@ -81,11 +81,11 @@ function processData() {
 function handleClick() {}
 
 // ❌ hardcoded-secrets: API key in source
-const apiKey = "sk-abc123def456ghi789jkl"; // [REDACTED]
+const apiKey = "YOUR_API_KEY_HERE"; // [REDACTED]
 
 // ❌ empty-catch: Silently swallowed error
 try {
-  await fetch("/api/data"); // ❌ no-http-timeout: No timeout set
+  await fetch("/api/data", { signal: AbortSignal.timeout(5000) }); // ❌ caught by empty-catch
 } catch (e) {} // empty catch
 ```
 
@@ -134,7 +134,7 @@ Create a `.repoproof.json` or `.repoproof.jsonc` file in your project root:
   "failOn": "warning",
   "disabledRules": ["mock-data"],
   "severityOverrides": {
-    "todo-fixme": "error",
+    "empty-function": "error",
   },
   "penaltyOverrides": {
     "empty-function": 1,

@@ -47,11 +47,17 @@ jobs:
         run: pnpm smoke
 
       - name: Scan Self
-        run: node dist/cli.js scan . --format text --quiet
+        run: |
+          node dist/cli.js scan . \
+            --config .repoproof.ci.json \
+            --format html \
+            --output repoproof-self-scan.html \
+            --min-score 90 \
+            --fail-on error
 
       - name: Upload Self-Scan Report
         uses: actions/upload-artifact@v4
         with:
           name: self-scan-report
-          path: .repoproof/report.html
-        continue-on-error: true
+          path: repoproof-self-scan.html
+        if: always()

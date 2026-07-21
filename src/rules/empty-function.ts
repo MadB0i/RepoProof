@@ -1,4 +1,4 @@
-import { Rule, RuleResult, ScanContext } from "../types.js";
+import { Rule, RuleResult, ScanContext, SOURCE_CODE_EXTENSIONS } from "../types.js";
 
 const CONTROL_KEYWORDS = new Set(["if", "else", "for", "while", "switch", "catch", "try", "do"]);
 
@@ -79,6 +79,8 @@ const rule: Rule = {
 
       for (const file of context.files) {
         if (totalPenalty >= MAX_PENALTY) break;
+        const ext = file.relativePath.substring(file.relativePath.lastIndexOf("."));
+        if (!SOURCE_CODE_EXTENSIONS.has(ext)) continue;
 
         const emptyFuncs = findEmptyFunctions(file.content, file.relativePath);
         for (const ef of emptyFuncs) {

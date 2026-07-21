@@ -1,4 +1,4 @@
-import { Rule, RuleResult, ScanContext } from "../types.js";
+import { Rule, RuleResult, ScanContext, SOURCE_CODE_EXTENSIONS } from "../types.js";
 
 const CORS_PATTERNS = [
   /["'`]Access-Control-Allow-Origin["'`]\s*[=:]\s*["'`]\*["'`]/gi,
@@ -30,6 +30,8 @@ const rule: Rule = {
 
       for (const file of context.files) {
         if (totalPenalty >= MAX_PENALTY) break;
+        const ext = file.relativePath.substring(file.relativePath.lastIndexOf("."));
+        if (!SOURCE_CODE_EXTENSIONS.has(ext)) continue;
 
         for (const pattern of CORS_PATTERNS) {
           if (totalPenalty >= MAX_PENALTY) break;

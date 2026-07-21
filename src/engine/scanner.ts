@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { ScannedFile, ScanContext, RepoProofConfig, ProjectType } from "../types.js";
 
@@ -81,7 +81,10 @@ const BINARY_EXTENSIONS = new Set([
   ".lib",
 ]);
 
-export function detectProjectType(files: ScannedFile[]): ProjectType {
+export function detectProjectType(files: ScannedFile[], dirPath?: string): ProjectType {
+  const lockfileExists = (name: string): boolean =>
+    files.some((f) => f.relativePath === name) ||
+    (dirPath !== undefined && existsSync(join(dirPath, name)));
   return {
     languages: detectLanguages(files),
     hasPackageJson: files.some((f) => f.relativePath === "package.json"),
@@ -105,9 +108,17 @@ export function detectProjectType(files: ScannedFile[]): ProjectType {
         f.relativePath.endsWith(".yaml"),
     ),
     hasGitignore: files.some((f) => f.relativePath === ".gitignore"),
-    hasLockfile: files.some((f) =>
-      /lockfile|yarn\.lock|pnpm-lock|package-lock/i.test(f.relativePath),
-    ),
+    hasLockfile:
+      lockfileExists("pnpm-lock.yaml") ||
+      lockfileExists("pnpm-lock.yml") ||
+      lockfileExists("package-lock.json") ||
+      lockfileExists("yarn.lock") ||
+      lockfileExists("Cargo.lock") ||
+      lockfileExists("go.sum") ||
+      lockfileExists("poetry.lock") ||
+      lockfileExists("Pipfile.lock") ||
+      lockfileExists("composer.lock") ||
+      lockfileExists("Gemfile.lock"),
     hasTestDir: files.some(
       (f) =>
         f.relativePath.startsWith("test") ||
@@ -259,7 +270,7 @@ export function scanDirectory(
             return;
           }
         } catch {
-          // Skip unreadable files
+          void 0;
         }
       }
     }
@@ -272,10 +283,14 @@ export function scanDirectory(
   return results;
 }
 
-export function createScanContext(files: ScannedFile[], config: RepoProofConfig): ScanContext {
+export function createScanContext(
+  files: ScannedFile[],
+  config: RepoProofConfig,
+  dirPath?: string,
+): ScanContext {
   return {
     files,
     config,
-    projectType: detectProjectType(files),
+    projectType: detectProjectType(files, dirPath),
   };
 }

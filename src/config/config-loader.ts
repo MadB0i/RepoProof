@@ -20,9 +20,12 @@ function stripJsoncComments(jsonc: string): string {
   return result;
 }
 
+const MAX_DIR_DEPTH = 50;
+
 export function findConfig(startDir: string): string | null {
   let current = resolve(startDir);
-  while (true) {
+  let depth = 0;
+  while (depth < MAX_DIR_DEPTH) {
     for (const filename of CONFIG_FILENAMES) {
       const filePath = join(current, filename);
       if (existsSync(filePath)) {
@@ -32,6 +35,7 @@ export function findConfig(startDir: string): string | null {
     const parent = dirname(current);
     if (parent === current) break;
     current = parent;
+    depth++;
   }
   return null;
 }
