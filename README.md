@@ -15,12 +15,28 @@
 
 ---
 
-## Terminal Demo
+## RepoProof audits itself
 
-Scanning a risky repository — 56 findings detected in under a second:
+RepoProof's CI-controlled self-audit scores **90/A with zero errors**:
+
+<p align="center">
+  <img src="assets/screenshots/self-scan-report.png" alt="RepoProof self-audit report showing score 90/100, Grade A, 0 errors" width="95%">
+</p>
+
+---
+
+## See it catch a deliberately broken repository
+
+Scanning a repository that is intentionally insecure and incomplete — 56 findings detected in under a second:
 
 <p align="center">
   <img src="assets/screenshots/terminal-scan.png" alt="RepoProof terminal scan of risky-demo-repo showing 56 findings across all categories" width="90%">
+</p>
+
+This repository is intentionally insecure and incomplete. Its low score demonstrates RepoProof's detection capabilities — not RepoProof's own quality.
+
+<p align="center">
+  <img src="assets/screenshots/risky-demo-report.png" alt="RepoProof HTML report of the intentionally risky demo repository" width="95%">
 </p>
 
 ---
@@ -118,14 +134,6 @@ try {
 | Markdown | `--format markdown`       | PR comments, issues      |
 | HTML     | `--format html`           | Visual browsing, sharing |
 | SARIF    | `--format sarif`          | GitHub Code Scanning     |
-
----
-
-## HTML Report Preview
-
-<p align="center">
-  <img src="assets/screenshots/html-report.png" alt="RepoProof HTML report showing score summary, category breakdown cards, and detailed findings table" width="95%">
-</p>
 
 ---
 
