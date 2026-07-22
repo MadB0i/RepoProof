@@ -1,0 +1,2188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RepoProof - Quality Audit Report</title>
+<style>
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #f8f9fa;
+    --color-border: #dee2e6;
+    --color-text: #212529;
+    --color-text-secondary: #6c757d;
+    --color-pass: #2d8a4e;
+    --color-pass-bg: #e8f5e9;
+    --color-warn: #b8860b;
+    --color-warn-bg: #fff8e1;
+    --color-fail: #c62828;
+    --color-fail-bg: #ffebee;
+    --color-info: #1565c0;
+    --color-info-bg: #e3f2fd;
+    --color-card-shadow: rgba(0,0,0,0.08);
+    --color-table-stripe: #f8f9fa;
+    --color-table-hover: #e9ecef;
+    --radius: 8px;
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
+
+  [data-theme="dark"] {
+    --color-bg: #1a1a2e;
+    --color-surface: #16213e;
+    --color-border: #2a2a4a;
+    --color-text: #e0e0e0;
+    --color-text-secondary: #a0a0b0;
+    --color-pass: #4caf50;
+    --color-pass-bg: #1b3a2b;
+    --color-warn: #ffc107;
+    --color-warn-bg: #3a3010;
+    --color-fail: #ef5350;
+    --color-fail-bg: #3a1a1a;
+    --color-info: #64b5f6;
+    --color-info-bg: #0d2538;
+    --color-card-shadow: rgba(0,0,0,0.3);
+    --color-table-stripe: #1a1a32;
+    --color-table-hover: #222244;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-family);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 0;
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: 32px;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .theme-toggle {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .theme-toggle:hover {
+    background: var(--color-table-hover);
+  }
+
+  /* Score overview */
+  .score-overview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 0;
+    margin-bottom: 32px;
+  }
+
+  .score-ring {
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+
+  .score-ring svg { transform: rotate(-90deg); }
+
+  .score-ring .bg { fill: none; stroke: var(--color-border); stroke-width: 8; }
+  .score-ring .fg {
+    fill: none;
+    stroke: var(--color-fail);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 339.29200658769764;
+    stroke-dashoffset: 318.93448619243577;
+    transition: stroke-dashoffset 1s ease;
+  }
+
+  .score-ring .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .score-ring .score-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-text);
+  }
+
+  .score-ring .score-label {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+  }
+
+  .score-grade {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-fail);
+  }
+
+  .score-meta {
+    text-align: center;
+  }
+
+  .score-meta .total-findings {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* Summary cards */
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .summary-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+  }
+
+  .summary-card .count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .summary-card .label {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .summary-card.error .count { color: var(--color-fail); }
+  .summary-card.warning .count { color: var(--color-warn); }
+  .summary-card.info .count { color: var(--color-info); }
+  .summary-card.passed .count { color: var(--color-pass); }
+
+  /* Category cards */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .category-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .category-card:hover {
+    box-shadow: 0 4px 12px var(--color-card-shadow);
+    transform: translateY(-1px);
+  }
+
+  .category-card h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--color-text);
+  }
+
+  .category-card .progress-bar {
+    height: 8px;
+    background: var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .category-card .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  .category-card .progress-fill.pass { background: var(--color-pass); }
+  .category-card .progress-fill.warn { background: var(--color-warn); }
+  .category-card .progress-fill.fail { background: var(--color-fail); }
+
+  .category-card .cat-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  .category-card .cat-score {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  /* Filters */
+  .filters {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .filters label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .filters input[type="search"] {
+    flex: 1;
+    min-width: 180px;
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: 0.875rem;
+  }
+
+  .filters select {
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: 0.875rem;
+  }
+
+  .severity-filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .severity-filters label {
+    font-weight: 400;
+    font-size: 0.8125rem;
+    cursor: pointer;
+  }
+
+  .severity-filters input[type="checkbox"] {
+    cursor: pointer;
+  }
+
+  /* Findings table */
+  .findings-section h2 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .findings-count {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    font-weight: 400;
+  }
+
+  .findings-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  table.findings {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  table.findings th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--color-surface);
+    border-bottom: 2px solid var(--color-border);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  table.findings th.sorted-asc::after { content: " \25B2"; font-size: 0.625rem; }
+  table.findings th.sorted-desc::after { content: " \25BC"; font-size: 0.625rem; }
+
+  table.findings td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+  }
+
+  table.findings tr:nth-child(even) { background: var(--color-table-stripe); }
+  table.findings tr:hover { background: var(--color-table-hover); }
+
+  .severity-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .severity-badge.error { background: var(--color-fail-bg); color: var(--color-fail); }
+  .severity-badge.warning { background: var(--color-warn-bg); color: var(--color-warn); }
+  .severity-badge.info { background: var(--color-info-bg); color: var(--color-info); }
+
+  .finding-id {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.8125rem;
+  }
+
+  .finding-title {
+    font-weight: 600;
+  }
+
+  .finding-location {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    word-break: break-all;
+  }
+
+  .finding-evidence {
+    margin-top: 8px;
+    font-size: 0.8125rem;
+  }
+
+  .finding-evidence summary {
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+
+  .finding-evidence .evidence-content {
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .finding-remediation {
+    margin-top: 4px;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  .finding-doc {
+    font-size: 0.75rem;
+  }
+
+  .finding-doc a {
+    color: var(--color-info);
+    text-decoration: none;
+  }
+
+  .finding-doc a:hover {
+    text-decoration: underline;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--color-text-secondary);
+  }
+
+  .empty-state h3 {
+    font-size: 1.125rem;
+    margin-bottom: 8px;
+    color: var(--color-text);
+  }
+
+  footer {
+    text-align: center;
+    padding: 32px 0;
+    border-top: 1px solid var(--color-border);
+    margin-top: 32px;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* No-findings state */
+  .no-findings {
+    text-align: center;
+    padding: 48px 16px;
+  }
+
+  .no-findings .icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+  }
+
+  .no-findings h2 {
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+  }
+
+  .no-findings p {
+    color: var(--color-text-secondary);
+  }
+
+  /* Print */
+  @media print {
+    .theme-toggle, .filters, .header-controls { display: none !important; }
+    body { background: #fff; color: #000; }
+    .category-card { break-inside: avoid; }
+    .score-overview { break-inside: avoid; }
+    table.findings tr { break-inside: avoid; }
+    .container { max-width: 100%; padding: 0; }
+    header { border-bottom-color: #ccc; }
+    .findings-table-wrapper { border-color: #ccc; }
+    table.findings th { background: #f0f0f0; }
+    table.findings tr:nth-child(even) { background: #f8f8f8; }
+  }
+
+  @media (max-width: 640px) {
+    .score-overview { flex-direction: column; gap: 16px; }
+    .score-grade { font-size: 3rem; }
+    header { flex-direction: column; align-items: flex-start; }
+    .filters { flex-direction: column; align-items: stretch; }
+    .severity-filters { flex-wrap: wrap; }
+    .category-grid { grid-template-columns: 1fr; }
+    .summary-cards { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header role="banner">
+    <h1>RepoProof &mdash; Repository Quality Audit</h1>
+    <div class="header-controls">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+        <span id="themeIcon">&#9790;</span> <span id="themeLabel">Dark</span>
+      </button>
+    </div>
+  </header>
+
+  
+  <section aria-label="Score overview">
+    <div class="score-overview">
+      <div class="score-ring" role="img" aria-label="Score: 6.0 out of 100">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle class="bg" cx="60" cy="60" r="54"/>
+          <circle class="fg" cx="60" cy="60" r="54"/>
+        </svg>
+        <div class="center">
+          <div class="score-value">6</div>
+          <div class="score-label">/ 100</div>
+        </div>
+      </div>
+      <div class="score-grade" aria-label="Grade F">F</div>
+      <div class="score-meta">
+        <div style="font-size:1rem;font-weight:600;">6.0%</div>
+        <div class="total-findings">56 finding(s) &middot; 4 check(s) passed</div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Summary statistics">
+    <div class="summary-cards">
+      <div class="summary-card error">
+        <div class="count" id="countError">17</div>
+        <div class="label">Errors</div>
+      </div>
+      <div class="summary-card warning">
+        <div class="count" id="countWarning">34</div>
+        <div class="label">Warnings</div>
+      </div>
+      <div class="summary-card info">
+        <div class="count" id="countInfo">5</div>
+        <div class="label">Info</div>
+      </div>
+      <div class="summary-card passed">
+        <div class="count">4</div>
+        <div class="label">Passed</div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Category scores">
+    <h2 style="font-size:1.125rem;font-weight:700;margin-bottom:12px;">Categories</h2>
+    <div class="category-grid">
+      
+        <div class="category-card" role="region" aria-label="Incomplete Implementation">
+          <h3>Incomplete Implementation</h3>
+          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill fail" style="width:0%"></div>
+          </div>
+          <div class="cat-meta">
+            <span class="cat-score">0.0 / 20</span>
+            <span>20 finding(s)</span>
+          </div>
+        </div>
+        <div class="category-card" role="region" aria-label="Tests">
+          <h3>Tests</h3>
+          <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill fail" style="width:30%"></div>
+          </div>
+          <div class="cat-meta">
+            <span class="cat-score">6.0 / 20</span>
+            <span>3 finding(s)</span>
+          </div>
+        </div>
+        <div class="category-card" role="region" aria-label="Security Configuration">
+          <h3>Security Configuration</h3>
+          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill fail" style="width:0%"></div>
+          </div>
+          <div class="cat-meta">
+            <span class="cat-score">0.0 / 30</span>
+            <span>11 finding(s)</span>
+          </div>
+        </div>
+        <div class="category-card" role="region" aria-label="Error Handling &amp; Reliability">
+          <h3>Error Handling &amp; Reliability</h3>
+          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill fail" style="width:0%"></div>
+          </div>
+          <div class="cat-meta">
+            <span class="cat-score">0.0 / 15</span>
+            <span>10 finding(s)</span>
+          </div>
+        </div>
+        <div class="category-card" role="region" aria-label="Repository Readiness">
+          <h3>Repository Readiness</h3>
+          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill fail" style="width:0%"></div>
+          </div>
+          <div class="cat-meta">
+            <span class="cat-score">0.0 / 15</span>
+            <span>12 finding(s)</span>
+          </div>
+        </div>
+    </div>
+  </section>
+
+  <section class="findings-section" aria-label="Findings">
+    <h2>Findings <span class="findings-count" id="visibleCount">56 visible</span></h2>
+
+    <div class="filters" role="search" aria-label="Filter findings">
+      <div class="severity-filters">
+        <label><input type="checkbox" class="severity-filter" value="error" checked aria-label="Filter errors"> Error</label>
+        <label><input type="checkbox" class="severity-filter" value="warning" checked aria-label="Filter warnings"> Warning</label>
+        <label><input type="checkbox" class="severity-filter" value="info" checked aria-label="Filter info"> Info</label>
+      </div>
+      <label>
+        Category:
+        <select id="categoryFilter" aria-label="Filter by category">
+          <option value="">All Categories</option>
+          <option value="incomplete-implementation">Incomplete Implementation</option><option value="tests">Tests</option><option value="security-configuration">Security Configuration</option><option value="error-handling-reliability">Error Handling &amp; Reliability</option><option value="repository-readiness">Repository Readiness</option>
+        </select>
+      </label>
+      <input type="search" id="searchFilter" placeholder="Search findings..." aria-label="Search findings by keyword">
+    </div>
+
+    <div class="findings-table-wrapper">
+      <table class="findings" id="findingsTable">
+        <thead>
+          <tr>
+            <th data-sort="severity" aria-sort="none">Severity</th>
+            <th data-sort="id" aria-sort="none">Rule ID</th>
+            <th data-sort="title" aria-sort="none">Title</th>
+            <th data-sort="category" aria-sort="none">Category</th>
+            <th data-sort="location" aria-sort="none">Location</th>
+            <th data-sort="penalty" aria-sort="none">Penalty</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody id="findingsBody">
+          
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="0">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">todo-fixme</span></td>
+            <td><span class="finding-title">TODO/FIXME markers in source code</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:76</span></td>
+            <td>-2</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> File contains 4 TODO/FIXME markers
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:76</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// [todo-fixme]</pre></div><div style="margin-top:4px;"><code>src/__tests__/test.js:78</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// TODO: add integration tests for the full flow</pre></div><div style="margin-top:4px;"><code>src/__tests__/test.js:79</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// FIXME: these unit tests don&#039;t cover edge cases</pre></div><div style="margin-top:4px;"><code>src/__tests__/test.js:80</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// TODO: add performance benchmarks</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove or resolve all TODO/FIXME markers.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/todo-fixme" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="1">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">todo-fixme</span></td>
+            <td><span class="finding-title">TODO/FIXME markers in source code</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/helper.js:8</span></td>
+            <td>-2</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> File contains 3 TODO/FIXME markers
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:8</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// [todo-fixme]</pre></div><div style="margin-top:4px;"><code>src/helper.js:10</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// TODO: consolidate all helper functions into a utility module</pre></div><div style="margin-top:4px;"><code>src/helper.js:11</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// FIXME: this file has no unit tests</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove or resolve all TODO/FIXME markers.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/todo-fixme" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="2">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">todo-fixme</span></td>
+            <td><span class="finding-title">TODO/FIXME markers in source code</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/index.js:8</span></td>
+            <td>-2</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> File contains 6 TODO/FIXME markers
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/index.js:8</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// [todo-fixme] TODO and FIXME comments</pre></div><div style="margin-top:4px;"><code>src/index.js:10</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// TODO: refactor this entire module into smaller pieces</pre></div><div style="margin-top:4px;"><code>src/index.js:11</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// FIXME: the error handling here is completely broken</pre></div><div style="margin-top:4px;"><code>src/index.js:12</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// TODO: add input validation before processing requests</pre></div><div style="margin-top:4px;"><code>src/index.js:13</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// FIXME: this approach has a race condition</pre></div><div style="margin-top:4px;"><code>src/index.js:76</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">//   // TODO: remove this when new batch processor is stable</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove or resolve all TODO/FIXME markers.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/todo-fixme" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="incomplete-implementation" data-idx="3">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">not-implemented</span></td>
+            <td><span class="finding-title">Not implemented code paths</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:33</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found not-implemented code path: &quot;throw new Error(&#039;not implemented&#039;)&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:33</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">throw new Error(&#039;[REDACTED]&#039;)</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Implement the missing functionality.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/not-implemented" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="incomplete-implementation" data-idx="4">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">not-implemented</span></td>
+            <td><span class="finding-title">Not implemented code paths</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:37</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found not-implemented code path: &quot;throw new Error(&#039;not implemented&#039;)&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:37</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">throw new Error(&#039;[REDACTED]&#039;)</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Implement the missing functionality.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/not-implemented" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="incomplete-implementation" data-idx="5">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">not-implemented</span></td>
+            <td><span class="finding-title">Not implemented code paths</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/helper.js:17</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found not-implemented code path: &quot;throw new Error(&#039;not implemented&#039;)&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:17</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">throw new Error(&#039;[REDACTED]&#039;)</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Implement the missing functionality.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/not-implemented" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="6">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">empty-function</span></td>
+            <td><span class="finding-title">Empty function bodies</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:3</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found empty function body: it(&#039;&#039;, function() {}
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:3</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">it(&#039;&#039;, function() {}</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Implement or remove the empty function.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/empty-function" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="7">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">empty-function</span></td>
+            <td><span class="finding-title">Empty function bodies</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:4</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found empty function body: it(&#039;&#039;, function() {}
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:4</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">it(&#039;&#039;, function() {}</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Implement or remove the empty function.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/empty-function" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="8">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">empty-function</span></td>
+            <td><span class="finding-title">Empty function bodies</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:4</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found empty function body: it(&#039;&#039;, function() {}
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:4</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">it(&#039;&#039;, function() {}</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Implement or remove the empty function.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/empty-function" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="9">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">empty-function</span></td>
+            <td><span class="finding-title">Empty function bodies</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:5</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found empty function body: beforeEach(function() {}
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:5</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">beforeEach(function() {}</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Implement or remove the empty function.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/empty-function" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="10">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">placeholder-text</span></td>
+            <td><span class="finding-title">Placeholder text in source code</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:90</span></td>
+            <td>-2</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> File contains 2 placeholder text instance(s)
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:90</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// [placeholder-text]</pre></div><div style="margin-top:4px;"><code>src/__tests__/test.js:92</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var testDescription = &#039;[REDACTED]&#039;;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Replace placeholder text with actual content.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/placeholder-text" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="11">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">placeholder-text</span></td>
+            <td><span class="finding-title">Placeholder text in source code</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/helper.js:201</span></td>
+            <td>-2</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> File contains 3 placeholder text instance(s)
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:201</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// [placeholder-text]</pre></div><div style="margin-top:4px;"><code>src/helper.js:203</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var introText = &#039;[REDACTED]&#039; +</pre></div><div style="margin-top:4px;"><code>src/helper.js:206</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var fallbackMessage = &#039;[REDACTED]&#039;;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Replace placeholder text with actual content.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/placeholder-text" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="12">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">placeholder-text</span></td>
+            <td><span class="finding-title">Placeholder text in source code</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/index.js:264</span></td>
+            <td>-2</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> File contains 4 placeholder text instance(s)
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/index.js:264</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// [placeholder-text] Lorem ipsum and filler text</pre></div><div style="margin-top:4px;"><code>src/index.js:266</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var helpText = &#039;[REDACTED]&#039; +</pre></div><div style="margin-top:4px;"><code>src/index.js:270</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var defaultDescription = &#039;[REDACTED]&#039; +</pre></div><div style="margin-top:4px;"><code>src/index.js:273</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var errorMessage = &#039;[REDACTED]&#039;;  // pangram placeholder</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Replace placeholder text with actual content.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/placeholder-text" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="13">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">commented-code</span></td>
+            <td><span class="finding-title">Commented-out code blocks</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:41</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found 16 consecutive lines of commented code
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:41</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// --------------------------------------------------; // [commented-code]; // -----------------------------------------</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove commented-out code.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/commented-code" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="14">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">commented-code</span></td>
+            <td><span class="finding-title">Commented-out code blocks</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/__tests__/test.js:75</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found 6 consecutive lines of commented code
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:75</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// --------------------------------------------------; // [todo-fixme]; // ---------------------------------------------</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove commented-out code.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/commented-code" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="15">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">commented-code</span></td>
+            <td><span class="finding-title">Commented-out code blocks</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/helper.js:7</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found 5 consecutive lines of commented code
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:7</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// --------------------------------------------------; // [todo-fixme]; // ---------------------------------------------</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove commented-out code.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/commented-code" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="16">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">commented-code</span></td>
+            <td><span class="finding-title">Commented-out code blocks</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/helper.js:33</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Found 32 consecutive lines of commented code
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:33</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">// --------------------------------------------------; // [commented-code]; // -----------------------------------------</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove commented-out code.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/commented-code" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="17">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">mock-data</span></td>
+            <td><span class="finding-title">Hardcoded mock data in source code</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/helper.js:71</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Suspicious mock/test data: &quot;admin&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:71</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var MONGO_URI = &#039;[REDACTED]&#039;;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove mock data from production code.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/mock-data" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="18">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">mock-data</span></td>
+            <td><span class="finding-title">Hardcoded mock data in source code</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/index.js:107</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Suspicious mock/test data: &quot;admin&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/index.js:107</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">user: &#039;[REDACTED]&#039;,</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove mock data from production code.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/mock-data" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="incomplete-implementation" data-idx="19">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">mock-data</span></td>
+            <td><span class="finding-title">Hardcoded mock data in source code</span></td>
+            <td>Incomplete Implementation</td>
+            <td><span class="finding-location">src/index.js:279</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Suspicious mock/test data: &quot;admin&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/index.js:279</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">{ id: 1, name: &#039;[REDACTED]&#039;, email: &#039;[REDACTED]&#039;, role: &#039;[REDACTED]&#039; },</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove mock data from production code.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/mock-data" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="tests" data-idx="20">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">missing-tests</span></td>
+            <td><span class="finding-title">Missing test files for source files</span></td>
+            <td>Tests</td>
+            <td><span class="finding-location">src/helper.js</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Missing test files for 1 source file(s) in src
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js</code></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add test files for: src/helper.js
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/missing-tests" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="tests" data-idx="21">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">missing-tests</span></td>
+            <td><span class="finding-title">Missing test files for source files</span></td>
+            <td>Tests</td>
+            <td><span class="finding-location">src/__tests__/test.js</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Missing test files for 1 source file(s) in src/__tests__
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js</code></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add test files for: src/__tests__/test.js
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/missing-tests" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="tests" data-idx="22">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">test-echo-command</span></td>
+            <td><span class="finding-title">Test script is an echo placeholder</span></td>
+            <td>Tests</td>
+            <td><span class="finding-location">package.json</span></td>
+            <td>-8</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Test script is just an echo command: &quot;echo &quot;Error: no test specified&quot; &amp;&amp; exit 1&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>package.json</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">&quot;[REDACTED]&quot;: &quot;[REDACTED]&quot;Error: no test specified&quot;[REDACTED]&quot;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Replace echo with actual test runner command.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/test-echo-command" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="security-configuration" data-idx="23">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">hardcoded-secrets</span></td>
+            <td><span class="finding-title">Hardcoded secrets in source code</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/__tests__/test.js:85</span></td>
+            <td>-10</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> API key detected in source code in src/__tests__/test.js
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:85</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">API_KEY = &#039;[REDACTED]&#039;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove hardcoded secret and use environment variables.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/hardcoded-secrets" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="security-configuration" data-idx="24">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">hardcoded-secrets</span></td>
+            <td><span class="finding-title">Hardcoded secrets in source code</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/__tests__/test.js:87</span></td>
+            <td>-10</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Secret key detected in source code in src/__tests__/test.js
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:87</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">SECRET = &#039;[REDACTED]&#039;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove hardcoded secret and use environment variables.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/hardcoded-secrets" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="security-configuration" data-idx="25">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">hardcoded-secrets</span></td>
+            <td><span class="finding-title">Hardcoded secrets in source code</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/helper.js:75</span></td>
+            <td>-10</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> API key detected in source code in src/helper.js
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:75</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">API_KEY = &#039;[REDACTED]&#039;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Remove hardcoded secret and use environment variables.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/hardcoded-secrets" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="security-configuration" data-idx="26">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">unsafe-eval</span></td>
+            <td><span class="finding-title">Use of eval() or dynamic code execution</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/helper.js:157</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Use of eval( detected
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:157</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var result = eval(code);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Replace eval/dynamic execution with safer alternatives.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/unsafe-eval" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="security-configuration" data-idx="27">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">unsafe-eval</span></td>
+            <td><span class="finding-title">Use of eval() or dynamic code execution</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/helper.js:162</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Use of eval( detected
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:162</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">return eval(&#039;[REDACTED]&quot;&#039;[REDACTED]&#039;&quot;)&#039;);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Replace eval/dynamic execution with safer alternatives.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/unsafe-eval" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="security-configuration" data-idx="28">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">unsafe-eval</span></td>
+            <td><span class="finding-title">Use of eval() or dynamic code execution</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/index.js:193</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Use of eval( detected
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/index.js:193</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">return eval(code);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Replace eval/dynamic execution with safer alternatives.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/unsafe-eval" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="security-configuration" data-idx="29">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">wildcard-cors</span></td>
+            <td><span class="finding-title">Wildcard CORS configuration</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/helper.js:169</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Wildcard CORS configuration found: &quot;Header(&#039;Access-Control-Allow-Origin&#039;, &#039;*&#039;&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:169</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">response.setHeader(&#039;[REDACTED]&#039;, &#039;*&#039;);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Restrict CORS to specific origins instead of using &#039;*&#039;.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/wildcard-cors" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="security-configuration" data-idx="30">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">wildcard-cors</span></td>
+            <td><span class="finding-title">Wildcard CORS configuration</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/index.js:212</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Wildcard CORS configuration found: &quot;Header(&#039;Access-Control-Allow-Origin&#039;, &#039;*&#039;&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/index.js:212</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">res.setHeader(&#039;[REDACTED]&#039;, &#039;*&#039;);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Restrict CORS to specific origins instead of using &#039;*&#039;.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/wildcard-cors" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="security-configuration" data-idx="31">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">debug-enabled</span></td>
+            <td><span class="finding-title">Debug mode enabled by default</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/index.js:246</span></td>
+            <td>-4</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Debug/development mode enabled: &quot;debug: true,&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/index.js:246</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">debug: true,</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Disable debug mode for production deployments.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/debug-enabled" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="security-configuration" data-idx="32">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">debug-enabled</span></td>
+            <td><span class="finding-title">Debug mode enabled by default</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">src/index.js:247</span></td>
+            <td>-4</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Debug/development mode enabled: &quot;logLevel: &#039;debug&#039;,&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/index.js:247</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">logLevel: &#039;[REDACTED]&#039;,</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Disable debug mode for production deployments.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/debug-enabled" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="security-configuration" data-idx="33">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">missing-gitignore</span></td>
+            <td><span class="finding-title">Missing .gitignore file</span></td>
+            <td>Security Configuration</td>
+            <td><span class="finding-location">N/A</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Project does not have a .gitignore file
+                </div>
+                
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Create a .gitignore file for your project.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/missing-gitignore" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="error-handling-reliability" data-idx="34">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">empty-catch</span></td>
+            <td><span class="finding-title">Empty catch blocks</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/__tests__/test.js:13</span></td>
+            <td>-4</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Empty catch block that silently swallows errors
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:13</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">it(&#039;[REDACTED]&#039;, function() {});</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Handle or log errors in catch blocks.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/empty-catch" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="error-handling-reliability" data-idx="35">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">empty-catch</span></td>
+            <td><span class="finding-title">Empty catch blocks</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/__tests__/test.js:18</span></td>
+            <td>-4</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Empty catch block that silently swallows errors
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:18</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">describe(&#039;[REDACTED]&#039;, function() {</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Handle or log errors in catch blocks.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/empty-catch" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="error-handling-reliability" data-idx="36">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">empty-catch</span></td>
+            <td><span class="finding-title">Empty catch blocks</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/__tests__/test.js:13</span></td>
+            <td>-4</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Empty catch block that silently swallows errors
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/__tests__/test.js:13</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">it(&#039;[REDACTED]&#039;, function() {});</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Handle or log errors in catch blocks.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/empty-catch" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="error-handling-reliability" data-idx="37">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">no-http-timeout</span></td>
+            <td><span class="finding-title">HTTP requests without timeout configuration</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/helper.js:117</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> HTTP request without timeout: &quot;fetch(&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:117</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var response = await fetch(endpoint);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add a timeout to this HTTP request.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/no-timeout" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="error-handling-reliability" data-idx="38">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">no-http-timeout</span></td>
+            <td><span class="finding-title">HTTP requests without timeout configuration</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/helper.js:122</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> HTTP request without timeout: &quot;fetch(&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:122</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">var res = await fetch(url);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add a timeout to this HTTP request.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/no-timeout" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="error-handling-reliability" data-idx="39">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">no-http-timeout</span></td>
+            <td><span class="finding-title">HTTP requests without timeout configuration</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/helper.js:134</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> HTTP request without timeout: &quot;fetch(&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:134</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">return await fetch(url);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add a timeout to this HTTP request.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/no-timeout" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="error-handling-reliability" data-idx="40">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">unbounded-retries</span></td>
+            <td><span class="finding-title">Unbounded retry loops</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/helper.js:132</span></td>
+            <td>-4</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Unbounded retry: while(true) loop with retry
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:132</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">while (true) {</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add a maximum retry count or timeout to cap retries.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/unbounded-retries" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="error-handling-reliability" data-idx="41">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">unbounded-retries</span></td>
+            <td><span class="finding-title">Unbounded retry loops</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/helper.js:143</span></td>
+            <td>-4</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Unbounded retry: while(true) loop with retry
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:143</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">while (true) {</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add a maximum retry count or timeout to cap retries.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/unbounded-retries" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="error-handling-reliability" data-idx="42">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">process-exit</span></td>
+            <td><span class="finding-title">process.exit() in library or module code</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/helper.js:179</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> process.exit() called in module file: src/helper.js
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:179</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">process.exit(1);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Replace process.exit() with proper error handling.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/process-exit" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="error-handling-reliability" data-idx="43">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">process-exit</span></td>
+            <td><span class="finding-title">process.exit() in library or module code</span></td>
+            <td>Error Handling &amp; Reliability</td>
+            <td><span class="finding-location">src/helper.js:184</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> process.exit() called in module file: src/helper.js
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>src/helper.js:184</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">process.exit(1);</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Replace process.exit() with proper error handling.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/process-exit" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="info" data-category="repository-readiness" data-idx="44">
+            <td><span class="severity-badge info" role="status">Info</span></td>
+            <td><span class="finding-id">readme-exists</span></td>
+            <td><span class="finding-title">Missing README file</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">N/A</span></td>
+            <td>-5</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Project does not have a README file
+                </div>
+                
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Create a README.md for the project.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/readme-exists" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="info" data-category="repository-readiness" data-idx="45">
+            <td><span class="severity-badge info" role="status">Info</span></td>
+            <td><span class="finding-id">license-exists</span></td>
+            <td><span class="finding-title">Missing LICENSE file</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">N/A</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Project does not have a LICENSE file
+                </div>
+                
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add a LICENSE file to clarify usage rights.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/license-exists" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="info" data-category="repository-readiness" data-idx="46">
+            <td><span class="severity-badge info" role="status">Info</span></td>
+            <td><span class="finding-id">contributing-exists</span></td>
+            <td><span class="finding-title">Missing CONTRIBUTING file</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">N/A</span></td>
+            <td>-1</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Project does not have a CONTRIBUTING file
+                </div>
+                
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add a CONTRIBUTING.md file.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/contributing-exists" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="info" data-category="repository-readiness" data-idx="47">
+            <td><span class="severity-badge info" role="status">Info</span></td>
+            <td><span class="finding-id">code-of-conduct</span></td>
+            <td><span class="finding-title">Missing CODE_OF_CONDUCT file</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">N/A</span></td>
+            <td>-1</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Project does not have a CODE_OF_CONDUCT file
+                </div>
+                
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add a CODE_OF_CONDUCT.md file.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/code-of-conduct" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="repository-readiness" data-idx="48">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">changelog-exists</span></td>
+            <td><span class="finding-title">Missing CHANGELOG file</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">N/A</span></td>
+            <td>-2</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Project does not have a CHANGELOG file
+                </div>
+                
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Add a CHANGELOG.md file.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/changelog-exists" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="repository-readiness" data-idx="49">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">ci-workflow</span></td>
+            <td><span class="finding-title">Missing CI/CD workflow</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">N/A</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Project does not have a CI/CD workflow configuration
+                </div>
+                
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Set up a CI workflow (GitHub Actions, GitLab CI, etc.).
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/ci-workflow" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="repository-readiness" data-idx="50">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">lockfile-exists</span></td>
+            <td><span class="finding-title">Missing lockfile for package manager</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">N/A</span></td>
+            <td>-4</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Missing lockfile for Node.js/TypeScript project
+                </div>
+                
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Generate and commit a lockfile for your package manager.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/lockfile-exists" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="info" data-category="repository-readiness" data-idx="51">
+            <td><span class="severity-badge info" role="status">Info</span></td>
+            <td><span class="finding-id">env-documented</span></td>
+            <td><span class="finding-title">Environment variables not documented</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">N/A</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Environment variables are not documented
+                </div>
+                
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Create a .env.example file with all required environment variables documented.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/env-documented" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="warning" data-category="repository-readiness" data-idx="52">
+            <td><span class="severity-badge warning" role="status">Warning</span></td>
+            <td><span class="finding-id">package-metadata</span></td>
+            <td><span class="finding-title">Incorrect or missing package.json metadata</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">package.json</span></td>
+            <td>-4</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> 2 metadata issue(s) found: Missing package license; Missing repository URL
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>package.json</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">Missing package license</pre></div><div style="margin-top:4px;"><code>package.json</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">Missing repository URL</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Fix the package.json metadata fields listed above.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/package-metadata" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="repository-readiness" data-idx="53">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">broken-scripts</span></td>
+            <td><span class="finding-title">Broken or placeholder script definitions in package.json</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">package.json</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Suspicious script &quot;test&quot;: &quot;echo &quot;Error: no test specified&quot; &amp;&amp; exit 1&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>package.json</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">&quot;[REDACTED]&quot;: &quot;[REDACTED]&quot;Error: no test specified&quot;[REDACTED]&quot;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Fix the &quot;test&quot; script with a valid command.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/broken-scripts" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="repository-readiness" data-idx="54">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">broken-scripts</span></td>
+            <td><span class="finding-title">Broken or placeholder script definitions in package.json</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">package.json</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Suspicious script &quot;lint&quot;: &quot;echo &quot;Linting not configured yet&quot;&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>package.json</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">&quot;[REDACTED]&quot;: &quot;[REDACTED]&quot;Linting not configured yet&quot;&quot;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Fix the &quot;lint&quot; script with a valid command.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/broken-scripts" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+          <tr data-severity="error" data-category="repository-readiness" data-idx="55">
+            <td><span class="severity-badge error" role="status">Error</span></td>
+            <td><span class="finding-id">broken-scripts</span></td>
+            <td><span class="finding-title">Broken or placeholder script definitions in package.json</span></td>
+            <td>Repository Readiness</td>
+            <td><span class="finding-location">package.json</span></td>
+            <td>-3</td>
+            <td>
+              <details class="finding-evidence">
+                <summary>View details</summary>
+                <div class="evidence-content">
+                  <strong>Description:</strong> Suspicious script &quot;build&quot;: &quot;echo &quot;Build step placeholder&quot;&quot;
+                </div>
+                
+                <div class="evidence-content" style="margin-top:6px;">
+                  <strong>Evidence:</strong>
+                  <div style="margin-top:4px;"><code>package.json</code><pre style="margin-top:4px;background:var(--color-surface);padding:8px;border-radius:4px;overflow-x:auto;">&quot;[REDACTED]&quot;: &quot;[REDACTED]&quot;Build step placeholder&quot;&quot;</pre></div>
+                </div>
+                <div class="evidence-content finding-remediation" style="margin-top:6px;">
+                  <strong>Remediation:</strong> Fix the &quot;build&quot; script with a valid command.
+                </div>
+                <div class="evidence-content finding-doc" style="margin-top:4px;"><a href="https://repoproof.dev/docs/rules/broken-scripts" target="_blank" rel="noopener noreferrer">Documentation &nearr;</a></div>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  
+
+  <footer role="contentinfo">
+    <p>Report generated by <strong>RepoProof v1.0.0</strong> on 2026-07-22T03:15:39.719Z</p>
+    <p style="margin-top:4px;">License: MIT</p>
+  </footer>
+</div>
+
+<script>
+(function() {
+  var theme = localStorage.getItem("repoproof-theme") || "light";
+  document.documentElement.setAttribute("data-theme", theme);
+  updateThemeUI(theme);
+
+  var themeToggle = document.getElementById("themeToggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", function() {
+      var current = document.documentElement.getAttribute("data-theme");
+      var next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("repoproof-theme", next);
+      updateThemeUI(next);
+    });
+  }
+
+  function updateThemeUI(t) {
+    var icon = document.getElementById("themeIcon");
+    var label = document.getElementById("themeLabel");
+    if (!icon || !label) return;
+    if (t === "dark") {
+      icon.innerHTML = "\2600";
+      label.textContent = "Light";
+    } else {
+      icon.innerHTML = "\263E";
+      label.textContent = "Dark";
+    }
+  }
+
+  // Filtering
+  var severityCheckboxes = document.querySelectorAll(".severity-filter");
+  var categoryFilter = document.getElementById("categoryFilter");
+  var searchFilter = document.getElementById("searchFilter");
+  var tbody = document.getElementById("findingsBody");
+  var visibleCount = document.getElementById("visibleCount");
+
+  function filterRows() {
+    if (!tbody) return;
+    var selectedSeverities = [];
+    severityCheckboxes.forEach(function(cb) {
+      if (cb.checked) selectedSeverities.push(cb.value);
+    });
+    var selectedCategory = categoryFilter ? categoryFilter.value : "";
+    var searchTerm = searchFilter ? searchFilter.value.toLowerCase() : "";
+    var rows = tbody.querySelectorAll("tr");
+    var visible = 0;
+
+    rows.forEach(function(row) {
+      var sev = row.getAttribute("data-severity");
+      var cat = row.getAttribute("data-category");
+      var text = row.textContent.toLowerCase();
+      var sevMatch = selectedSeverities.indexOf(sev) !== -1;
+      var catMatch = !selectedCategory || cat === selectedCategory;
+      var searchMatch = !searchTerm || text.indexOf(searchTerm) !== -1;
+      var match = sevMatch && catMatch && searchMatch;
+      row.style.display = match ? "" : "none";
+      if (match) visible++;
+    });
+
+    if (visibleCount) {
+      visibleCount.textContent = visible + " visible";
+    }
+  }
+
+  severityCheckboxes.forEach(function(cb) { cb.addEventListener("change", filterRows); });
+  if (categoryFilter) categoryFilter.addEventListener("change", filterRows);
+  if (searchFilter) searchFilter.addEventListener("input", filterRows);
+
+  // Sorting
+  var sortCol = null;
+  var sortDir = "asc";
+
+  document.querySelectorAll("th[data-sort]").forEach(function(th) {
+    th.addEventListener("click", function() {
+      var key = th.getAttribute("data-sort");
+      if (sortCol === key) {
+        sortDir = sortDir === "asc" ? "desc" : "asc";
+      } else {
+        sortCol = key;
+        sortDir = "asc";
+      }
+
+      document.querySelectorAll("th[data-sort]").forEach(function(h) {
+        h.classList.remove("sorted-asc", "sorted-desc");
+        h.removeAttribute("aria-sort");
+      });
+      th.classList.add(sortDir === "asc" ? "sorted-asc" : "sorted-desc");
+      th.setAttribute("aria-sort", sortDir === "asc" ? "ascending" : "descending");
+
+      sortTable(key, sortDir);
+    });
+  });
+
+  function sortTable(key, dir) {
+    if (!tbody) return;
+    var rows = Array.from(tbody.querySelectorAll("tr"));
+    var multiplier = dir === "asc" ? 1 : -1;
+
+    rows.sort(function(a, b) {
+      var aVal, bVal;
+      switch (key) {
+        case "severity":
+          aVal = severityWeight(a.getAttribute("data-severity"));
+          bVal = severityWeight(b.getAttribute("data-severity"));
+          break;
+        case "id":
+          aVal = a.querySelector(".finding-id")?.textContent || "";
+          bVal = b.querySelector(".finding-id")?.textContent || "";
+          break;
+        case "title":
+          aVal = a.querySelector(".finding-title")?.textContent || "";
+          bVal = b.querySelector(".finding-title")?.textContent || "";
+          break;
+        case "category":
+          aVal = a.getAttribute("data-category") || "";
+          bVal = b.getAttribute("data-category") || "";
+          break;
+        case "location":
+          aVal = a.querySelector(".finding-location")?.textContent || "";
+          bVal = b.querySelector(".finding-location")?.textContent || "";
+          break;
+        case "penalty":
+          var cells = a.querySelectorAll("td");
+          aVal = parseFloat(cells[5]?.textContent || "0");
+          bVal = parseFloat(b.querySelectorAll("td")[5]?.textContent || "0");
+          break;
+        default:
+          aVal = a.textContent;
+          bVal = b.textContent;
+      }
+
+      if (typeof aVal === "number") {
+        return (aVal - bVal) * multiplier;
+      }
+      return aVal.localeCompare(bVal) * multiplier;
+    });
+
+    rows.forEach(function(row) { tbody.appendChild(row); });
+    filterRows();
+  }
+
+  function severityWeight(s) {
+    if (s === "error") return 3;
+    if (s === "warning") return 2;
+    return 1;
+  }
+
+  // Initial sort by severity desc
+  var defaultTh = document.querySelector("th[data-sort="severity"]");
+  if (defaultTh) {
+    sortCol = "severity";
+    sortDir = "desc";
+    defaultTh.classList.add("sorted-desc");
+    defaultTh.setAttribute("aria-sort", "descending");
+    sortTable("severity", "desc");
+  }
+})();
+</script>
+</body>
+</html>
