@@ -1,47 +1,64 @@
-# RepoProof
+<h1 align="center">RepoProof</h1>
 
-**Fast, deterministic, local-first CLI for auditing repository-quality risks in AI-generated and rapidly generated software projects.**
+<p align="center">
+  <b>Deterministic, local-first CLI that audits repository-quality risks<br>
+  in AI-generated and rapidly built software projects.</b>
+</p>
 
-```text
-$ npx repoproof scan .
+<p align="center">
+  <a href="https://github.com/MadB0i/RepoProof/actions/workflows/ci.yml"><img src="https://github.com/MadB0i/RepoProof/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://www.npmjs.com/package/repoproof"><img src="https://img.shields.io/npm/v/repoproof" alt="npm version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/node-20%20|%2022%20|%2024-brightgreen" alt="Node 20, 22, 24">
+  <img src="https://img.shields.io/badge/local--only-true-success" alt="100% local">
+</p>
 
-  RepoProof Report ──────────────────────────────────────
-  Score: 67 / 100  Grade: D
-  ─────────────────────────────────────────────────────
-  Findings: 12 errors, 8 warnings, 3 info
-  ─────────────────────────────────────────────────────
-  Incomplete Implementation  12 / 20  ████████░░
-  Tests                       8 / 20  ████░░░░░░
-  Security Configuration     15 / 30  █████░░░░░
-  Error Handling & Reliability 9 / 15  ██████░░░░
-  Repository Readiness        8 / 15  █████░░░░░
-  ─────────────────────────────────────────────────────
-  FAIL (score 67 < minimum 70)
-```
+---
+
+## Terminal Demo
+
+Scanning a risky repository — 56 findings detected in under a second:
+
+<p align="center">
+  <img src="assets/screenshots/terminal-scan.png" alt="RepoProof terminal scan of risky-demo-repo showing 56 findings across all categories" width="90%">
+</p>
+
+---
+
+## Why RepoProof
+
+AI coding assistants generate code faster than ever, but they also introduce systematic patterns that degrade repository quality: stub implementations, hardcoded secrets, disabled tests, empty catch blocks, commented-out code, missing documentation, and insecure configurations.
+
+Manually reviewing for these patterns is tedious and inconsistent. RepoProof makes it deterministic and repeatable — scanning a full repository in under a second with zero external dependencies.
+
+---
 
 ## Features
 
-- **31 rules** across 5 categories — incomplete implementation, tests, security & configuration, error handling & reliability, and repository readiness
-- **5 report formats** — text, JSON, Markdown, HTML (with light/dark mode, score gauge, interactive table), and SARIF
-- **Zero network** — 100% local, nothing leaves your machine
-- **Deterministic** — same input always produces the same output
-- **Fast** — parallel rule execution with bounded concurrency
-- **No dependencies** to install globally — runs via `npx`
-- **Configurable** — JSON/JSONC configuration files with per-rule overrides
-- **CI-ready** — exits with non-zero on failures, supports GitHub Actions
+- **31 deterministic rules** — covers incomplete implementations, test gaps, security configuration, error-handling reliability, and repository readiness
+- **100% local** — all analysis runs on your machine. No data leaves your network
+- **No AI API key** — pure static analysis, no prompts, no cloud calls
+- **Does not execute your code** — source text is parsed, scripts are never run
+- **No telemetry** — zero data collection, zero tracking, no analytics
+- **Multiple report formats** — text, JSON, Markdown, HTML, SARIF
+- **CI-native** — single CLI command with `--min-score` and `--fail-on` gates
+- **Fast** — scans tens of thousands of files in under a second
+- **Node 20, 22, 24** — verified on every CI run
+- **245 tests** — full regression suite passes before every release
+
+---
 
 ## Installation
 
 ```bash
-# Run directly (no install)
-npx repoproof scan .
-
 # Install globally
 npm install -g repoproof
 
-# Or with pnpm
-pnpm add -g repoproof
+# Or run without installation
+npx repoproof scan .
 ```
+
+---
 
 ## Quick Start
 
@@ -49,7 +66,7 @@ pnpm add -g repoproof
 # Scan the current directory
 npx repoproof scan .
 
-# Scan a specific path
+# Scan a specific project
 npx repoproof scan ./path/to/project
 
 # Generate an HTML report
@@ -64,17 +81,18 @@ npx repoproof explain hardcoded-secrets
 # List all available rules
 npx repoproof list-rules
 
-# Create a starter configuration
+# Initialize a configuration file
 npx repoproof init
 ```
+
+---
 
 ## Example Findings
 
 ```javascript
-// ❌ marker: Markers left in source code
+// ❌ not-implemented: Code path not implemented
 function processData() {
-  // Example: implement this later
-  throw new Error("not implemented"); // ❌ not-implemented
+  throw new Error("not implemented");
 }
 
 // ❌ empty-function: Empty function body
@@ -85,18 +103,13 @@ const apiKey = "YOUR_API_KEY_HERE"; // [REDACTED]
 
 // ❌ empty-catch: Silently swallowed error
 try {
-  await fetch("/api/data", { signal: AbortSignal.timeout(5000) }); // ❌ caught by empty-catch
+  await fetch("/api/data", { signal: AbortSignal.timeout(5000) });
 } catch (e) {} // empty catch
 ```
 
-## Reports
+---
 
-### HTML Report
-
-![Example HTML Report](docs/report-example.png)
-_Generate this by running `npx repoproof scan . --format html`_
-
-### Supported Formats
+## Report Formats
 
 | Format   | Command                   | Use Case                 |
 | -------- | ------------------------- | ------------------------ |
@@ -105,6 +118,52 @@ _Generate this by running `npx repoproof scan . --format html`_
 | Markdown | `--format markdown`       | PR comments, issues      |
 | HTML     | `--format html`           | Visual browsing, sharing |
 | SARIF    | `--format sarif`          | GitHub Code Scanning     |
+
+---
+
+## HTML Report Preview
+
+<p align="center">
+  <img src="assets/screenshots/html-report.png" alt="RepoProof HTML report showing score summary, category breakdown cards, and detailed findings table" width="95%">
+</p>
+
+---
+
+## Configuration
+
+Create a `.repoproof.json` or `.repoproof.jsonc` file in your project root:
+
+```jsonc
+{
+  "$schema": "https://raw.githubusercontent.com/MadB0i/RepoProof/main/schema.json",
+  "minScore": 75,
+  "failOn": "warning",
+  "disabledRules": ["mock-data"],
+  "severityOverrides": {
+    "empty-function": "error",
+  },
+  "penaltyOverrides": {
+    "empty-function": 1,
+  },
+  "excludedPaths": ["dist", "generated"],
+}
+```
+
+---
+
+## GitHub Actions
+
+```yaml
+- name: Scan with RepoProof
+  run: npx repoproof scan . --format sarif --output results.sarif --min-score 90 --fail-on error
+
+- name: Upload SARIF to GitHub
+  uses: github/codeql-action/upload-sarif@v3
+  with:
+    sarif_file: results.sarif
+```
+
+---
 
 ## Supported Languages
 
@@ -119,88 +178,49 @@ RepoProof detects and scans projects written in:
 - **Ruby** (`.rb`)
 - **PHP** (`.php`)
 - **C#** (`.cs`)
-- **Swift** (`.swift`)
 - **Kotlin** (`.kt`)
+- **Swift** (`.swift`)
+- **Shell** (`.sh`, `.bash`, `.zsh`)
 
-Plus project-level detection for `package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, Dockerfiles, CI workflows, and more.
+---
 
-## Configuration
+## Safety and Privacy
 
-Create a `.repoproof.json` or `.repoproof.jsonc` file in your project root:
+- **No data exfiltration.** All scanning is performed locally. RepoProof never sends source code, file contents, or findings to any remote service.
+- **No AI API key needed.** There is no AI component. Every rule is deterministic pattern matching.
+- **No telemetry.** The CLI contains zero analytics, tracking, or usage reporting.
+- **Does not execute scripts.** RepoProof parses source files as text only. It never runs `npm install`, `pip install`, `make`, or any build command found in the repository.
+- **Secret redaction.** When secrets are detected, the matching values are redacted in all report outputs with `[REDACTED]`.
 
-```jsonc
-{
-  "minScore": 75,
-  "failOn": "warning",
-  "disabledRules": ["mock-data"],
-  "severityOverrides": {
-    "empty-function": "error",
-  },
-  "penaltyOverrides": {
-    "empty-function": 1,
-  },
-  "ignoredPaths": ["dist", "generated"],
-  "excludedPaths": ["test/fixtures"],
-  "includedPaths": ["src"],
-}
-```
-
-## Exit Codes
-
-| Exit Code | Condition                                                                |
-| --------- | ------------------------------------------------------------------------ |
-| 0         | Scan passed (score ≥ min, no threshold hits)                             |
-| 1         | Score below `--min-score`, or errors/warnings found matching `--fail-on` |
-| 1         | Invalid path, config, format, or rule ID                                 |
-| 1         | Cannot write output file                                                 |
-
-## CI Integration
-
-### GitHub Actions
-
-```yaml
-name: RepoProof Quality Gate
-on: [push, pull_request]
-
-jobs:
-  quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: npx repoproof scan .
-```
-
-See [docs/github-action.md](docs/github-action.md) for a complete workflow with artifact upload and score badge.
-
-## Privacy
-
-RepoProof is **100% local-first**. Your source code never leaves your machine. No telemetry, no data collection, no external API calls. All analysis happens in-process using static pattern matching.
+---
 
 ## Limitations
 
-- **Static analysis only** — RepoProof does not execute your code. It cannot detect runtime issues, logic bugs, or dynamic security vulnerabilities.
-- **Pattern-based** — Rules use regex and heuristics. False positives and false negatives are possible.
-- **No AI detection guarantee** — RepoProof cannot definitively determine whether code was written by an AI or a human. It flags patterns commonly associated with low-quality output regardless of origin.
-- **Language-agnostic heuristics** — Some rules apply best-effort heuristics across languages and may not catch every language-specific idiom.
-- **No dependency analysis** — RepoProof does not check for vulnerable package versions or supply-chain risks.
+- RepoProof is a **static analysis tool**. It cannot prove whether code was written by AI or by a human.
+- It is not a **security certification**. It flags patterns that are commonly associated with risk, but passing a scan does not guarantee a secure or production-ready repository.
+- Rules are intentionally conservative to minimise false positives. Some issues may require manual review.
+- Language support is file-extension based. RepoProof does not parse or understand language semantics — it scans source text for patterns.
 
-## Roadmap
+---
 
-- [ ] Additional language support (Zig, Dart, Elixir)
-- [ ] Custom rule definitions
-- [ ] Baseline/suppression file support
-- [ ] Pre-commit hook integration
-- [ ] IDE plugin (VS Code, JetBrains)
-- [ ] Team dashboard with historical trends
-- [ ] AI-assisted remediation suggestions
+## Rules Overview
+
+| Category                         | Rule IDs                                                                                                                                                                                        | What It Detects                                                     |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Incomplete Implementation**    | stubs, dead code, work-in-progress markers, mock data, coverage gaps                                                                                                                            | Stubs, dead code, TODO markers, mock data                           |
+| **Tests**                        | `disabled-tests`, `empty-test-files`, `missing-tests`                                                                                                                                           | Skipped tests, empty test bodies, files without corresponding tests |
+| **Security Configuration**       | `hardcoded-secrets`, `unsafe-eval`, `wildcard-cors`, `debug-enabled`, `env-tracked`, `env-documented`, `broken-scripts`                                                                         | Secrets, eval, CORS misconfiguration, debug modes left enabled      |
+| **Error Handling & Reliability** | `empty-catch`, `no-http-timeout`, `unbounded-retries`, `process-exit`                                                                                                                           | Silent error swallowing, hanging HTTP requests, infinite retries    |
+| **Repository Readiness**         | `readme-exists`, `license-exists`, `contributing-exists`, `code-of-conduct`, `changelog-exists`, `ci-workflow`, `missing-gitignore`, `lockfile-exists`, `package-metadata`, `test-echo-command` | Missing project files, metadata, lockfiles, CI configuration        |
+
+---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and workflow.
+Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+[MIT](LICENSE)

@@ -1,0 +1,213 @@
+﻿
+RepoProof — Repository Quality Audit
+============================================================
+
+  Overall Score: 6.0/100
+  Grade:        F
+  [==--------------------------------------]
+
+------------------------------------------------------------
+
+  Summary
+    Total Findings:  56
+    Errors:          17
+    Warnings:        34
+    Info:            5
+    Passed Checks:   4
+
+------------------------------------------------------------
+
+  ✖ ERROR (17)
+
+    [ERROR] not-implemented — Not implemented code paths
+            src/__tests__/test.js:33
+
+    [ERROR] not-implemented — Not implemented code paths
+            src/__tests__/test.js:37
+
+    [ERROR] not-implemented — Not implemented code paths
+            src/helper.js:17
+
+    [ERROR] test-echo-command — Test script is an echo placeholder
+            package.json
+
+    [ERROR] hardcoded-secrets — Hardcoded secrets in source code
+            src/__tests__/test.js:85
+
+    [ERROR] hardcoded-secrets — Hardcoded secrets in source code
+            src/__tests__/test.js:87
+
+    [ERROR] hardcoded-secrets — Hardcoded secrets in source code
+            src/helper.js:75
+
+    [ERROR] unsafe-eval — Use of eval() or dynamic code execution
+            src/helper.js:157
+
+    [ERROR] unsafe-eval — Use of eval() or dynamic code execution
+            src/helper.js:162
+
+    [ERROR] unsafe-eval — Use of eval() or dynamic code execution
+            src/index.js:193
+
+    [ERROR] wildcard-cors — Wildcard CORS configuration
+            src/helper.js:169
+
+    [ERROR] wildcard-cors — Wildcard CORS configuration
+            src/index.js:212
+
+    [ERROR] process-exit — process.exit() in library or module code
+            src/helper.js:179
+
+    [ERROR] process-exit — process.exit() in library or module code
+            src/helper.js:184
+
+    [ERROR] broken-scripts — Broken or placeholder script definitions in package.json
+            package.json
+
+    [ERROR] broken-scripts — Broken or placeholder script definitions in package.json
+            package.json
+
+    [ERROR] broken-scripts — Broken or placeholder script definitions in package.json
+            package.json
+
+  ⚠ WARNING (34)
+
+    [WARNING] todo-fixme — TODO/FIXME markers in source code
+            src/__tests__/test.js:76
+
+    [WARNING] todo-fixme — TODO/FIXME markers in source code
+            src/helper.js:8
+
+    [WARNING] todo-fixme — TODO/FIXME markers in source code
+            src/index.js:8
+
+    [WARNING] empty-function — Empty function bodies
+            src/__tests__/test.js:3
+
+    [WARNING] empty-function — Empty function bodies
+            src/__tests__/test.js:4
+
+    [WARNING] empty-function — Empty function bodies
+            src/__tests__/test.js:4
+
+    [WARNING] empty-function — Empty function bodies
+            src/__tests__/test.js:5
+
+    [WARNING] placeholder-text — Placeholder text in source code
+            src/__tests__/test.js:90
+
+    [WARNING] placeholder-text — Placeholder text in source code
+            src/helper.js:201
+
+    [WARNING] placeholder-text — Placeholder text in source code
+            src/index.js:264
+
+    [WARNING] commented-code — Commented-out code blocks
+            src/__tests__/test.js:41
+
+    [WARNING] commented-code — Commented-out code blocks
+            src/__tests__/test.js:75
+
+    [WARNING] commented-code — Commented-out code blocks
+            src/helper.js:7
+
+    [WARNING] commented-code — Commented-out code blocks
+            src/helper.js:33
+
+    [WARNING] mock-data — Hardcoded mock data in source code
+            src/helper.js:71
+
+    [WARNING] mock-data — Hardcoded mock data in source code
+            src/index.js:107
+
+    [WARNING] mock-data — Hardcoded mock data in source code
+            src/index.js:279
+
+    [WARNING] missing-tests — Missing test files for source files
+            src/helper.js
+
+    [WARNING] missing-tests — Missing test files for source files
+            src/__tests__/test.js
+
+    [WARNING] debug-enabled — Debug mode enabled by default
+            src/index.js:246
+
+    [WARNING] debug-enabled — Debug mode enabled by default
+            src/index.js:247
+
+    [WARNING] missing-gitignore — Missing .gitignore file
+            (no location)
+
+    [WARNING] empty-catch — Empty catch blocks
+            src/__tests__/test.js:13
+
+    [WARNING] empty-catch — Empty catch blocks
+            src/__tests__/test.js:18
+
+    [WARNING] empty-catch — Empty catch blocks
+            src/__tests__/test.js:13
+
+    [WARNING] no-http-timeout — HTTP requests without timeout configuration
+            src/helper.js:117
+
+    [WARNING] no-http-timeout — HTTP requests without timeout configuration
+            src/helper.js:122
+
+    [WARNING] no-http-timeout — HTTP requests without timeout configuration
+            src/helper.js:134
+
+    [WARNING] unbounded-retries — Unbounded retry loops
+            src/helper.js:132
+
+    [WARNING] unbounded-retries — Unbounded retry loops
+            src/helper.js:143
+
+    [WARNING] changelog-exists — Missing CHANGELOG file
+            (no location)
+
+    [WARNING] ci-workflow — Missing CI/CD workflow
+            (no location)
+
+    [WARNING] lockfile-exists — Missing lockfile for package manager
+            (no location)
+
+    [WARNING] package-metadata — Incorrect or missing package.json metadata
+            package.json
+
+  ℹ INFO (5)
+
+    [INFO] readme-exists — Missing README file
+            (no location)
+
+    [INFO] license-exists — Missing LICENSE file
+            (no location)
+
+    [INFO] contributing-exists — Missing CONTRIBUTING file
+            (no location)
+
+    [INFO] code-of-conduct — Missing CODE_OF_CONDUCT file
+            (no location)
+
+    [INFO] env-documented — Environment variables not documented
+            (no location)
+
+------------------------------------------------------------
+
+  Category Breakdown
+
+  [--------------------]  Incomplete Implementation        0.0/20  (20 findings)
+  [======--------------]  Tests                            6.0/20  (3 findings)
+  [--------------------]  Security Configuration           0.0/30  (11 findings)
+  [--------------------]  Error Handling & Reliability     0.0/15  (10 findings)
+  [--------------------]  Repository Readiness             0.0/15  (12 findings)
+
+------------------------------------------------------------
+
+  Next Steps
+
+    Review the findings above and address each issue.
+    Re-run the audit after making improvements:
+    $ repoproof
+    Report generated: 2026-07-22T03:15:38.909Z
+    RepoProof v1.0.0
+

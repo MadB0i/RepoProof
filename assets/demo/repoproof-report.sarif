@@ -1,0 +1,2092 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "RepoProof",
+          "version": "1.0.0",
+          "informationUri": "https://github.com/MadB0i/RepoProof",
+          "rules": [
+            {
+              "id": "todo-fixme",
+              "name": "TODO/FIXME markers in source code",
+              "fullDescription": {
+                "text": "File contains 4 TODO/FIXME markers",
+                "markdown": "File contains 4 TODO/FIXME markers"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/todo-fixme",
+              "help": {
+                "text": "Remove or resolve all TODO/FIXME markers.",
+                "markdown": "Remove or resolve all TODO/FIXME markers."
+              },
+              "properties": {
+                "category": "incomplete-implementation",
+                "scorePenalty": 2,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "not-implemented",
+              "name": "Not implemented code paths",
+              "fullDescription": {
+                "text": "Found not-implemented code path: \"throw new Error('not implemented')\"",
+                "markdown": "Found not-implemented code path: \"throw new Error\\('not implemented'\\)\""
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/not-implemented",
+              "help": {
+                "text": "Implement the missing functionality.",
+                "markdown": "Implement the missing functionality."
+              },
+              "properties": {
+                "category": "incomplete-implementation",
+                "scorePenalty": 5,
+                "severity": "error"
+              }
+            },
+            {
+              "id": "empty-function",
+              "name": "Empty function bodies",
+              "fullDescription": {
+                "text": "Found empty function body: it('', function() {}",
+                "markdown": "Found empty function body: it\\('', function\\(\\) {}"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/empty-function",
+              "help": {
+                "text": "Implement or remove the empty function.",
+                "markdown": "Implement or remove the empty function."
+              },
+              "properties": {
+                "category": "incomplete-implementation",
+                "scorePenalty": 3,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "placeholder-text",
+              "name": "Placeholder text in source code",
+              "fullDescription": {
+                "text": "File contains 2 placeholder text instance(s)",
+                "markdown": "File contains 2 placeholder text instance\\(s\\)"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/placeholder-text",
+              "help": {
+                "text": "Replace placeholder text with actual content.",
+                "markdown": "Replace placeholder text with actual content."
+              },
+              "properties": {
+                "category": "incomplete-implementation",
+                "scorePenalty": 2,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "commented-code",
+              "name": "Commented-out code blocks",
+              "fullDescription": {
+                "text": "Found 16 consecutive lines of commented code",
+                "markdown": "Found 16 consecutive lines of commented code"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/commented-code",
+              "help": {
+                "text": "Remove commented-out code.",
+                "markdown": "Remove commented-out code."
+              },
+              "properties": {
+                "category": "incomplete-implementation",
+                "scorePenalty": 3,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "mock-data",
+              "name": "Hardcoded mock data in source code",
+              "fullDescription": {
+                "text": "Suspicious mock/test data: \"admin\"",
+                "markdown": "Suspicious mock/test data: \"admin\""
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/mock-data",
+              "help": {
+                "text": "Remove mock data from production code.",
+                "markdown": "Remove mock data from production code."
+              },
+              "properties": {
+                "category": "incomplete-implementation",
+                "scorePenalty": 3,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "missing-tests",
+              "name": "Missing test files for source files",
+              "fullDescription": {
+                "text": "Missing test files for 1 source file(s) in src",
+                "markdown": "Missing test files for 1 source file\\(s\\) in src"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/missing-tests",
+              "help": {
+                "text": "Add test files for: src/helper.js",
+                "markdown": "Add test files for: src/helper.js"
+              },
+              "properties": {
+                "category": "tests",
+                "scorePenalty": 3,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "test-echo-command",
+              "name": "Test script is an echo placeholder",
+              "fullDescription": {
+                "text": "Test script is just an echo command: \"echo \"Error: no test specified\" && exit 1\"",
+                "markdown": "Test script is just an echo command: \"echo \"Error: no test specified\" && exit 1\""
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/test-echo-command",
+              "help": {
+                "text": "Replace echo with actual test runner command.",
+                "markdown": "Replace echo with actual test runner command."
+              },
+              "properties": {
+                "category": "tests",
+                "scorePenalty": 8,
+                "severity": "error"
+              }
+            },
+            {
+              "id": "hardcoded-secrets",
+              "name": "Hardcoded secrets in source code",
+              "fullDescription": {
+                "text": "API key detected in source code in src/__tests__/test.js",
+                "markdown": "API key detected in source code in src/\\_\\_tests\\_\\_/test.js"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/hardcoded-secrets",
+              "help": {
+                "text": "Remove hardcoded secret and use environment variables.",
+                "markdown": "Remove hardcoded secret and use environment variables."
+              },
+              "properties": {
+                "category": "security-configuration",
+                "scorePenalty": 10,
+                "severity": "error"
+              }
+            },
+            {
+              "id": "unsafe-eval",
+              "name": "Use of eval() or dynamic code execution",
+              "fullDescription": {
+                "text": "Use of eval( detected",
+                "markdown": "Use of eval\\( detected"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/unsafe-eval",
+              "help": {
+                "text": "Replace eval/dynamic execution with safer alternatives.",
+                "markdown": "Replace eval/dynamic execution with safer alternatives."
+              },
+              "properties": {
+                "category": "security-configuration",
+                "scorePenalty": 5,
+                "severity": "error"
+              }
+            },
+            {
+              "id": "wildcard-cors",
+              "name": "Wildcard CORS configuration",
+              "fullDescription": {
+                "text": "Wildcard CORS configuration found: \"Header('Access-Control-Allow-Origin', '*'\"",
+                "markdown": "Wildcard CORS configuration found: \"Header\\('Access-Control-Allow-Origin', '\\*'\""
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/wildcard-cors",
+              "help": {
+                "text": "Restrict CORS to specific origins instead of using '*'.",
+                "markdown": "Restrict CORS to specific origins instead of using '\\*'."
+              },
+              "properties": {
+                "category": "security-configuration",
+                "scorePenalty": 5,
+                "severity": "error"
+              }
+            },
+            {
+              "id": "debug-enabled",
+              "name": "Debug mode enabled by default",
+              "fullDescription": {
+                "text": "Debug/development mode enabled: \"debug: true,\"",
+                "markdown": "Debug/development mode enabled: \"debug: true,\""
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/debug-enabled",
+              "help": {
+                "text": "Disable debug mode for production deployments.",
+                "markdown": "Disable debug mode for production deployments."
+              },
+              "properties": {
+                "category": "security-configuration",
+                "scorePenalty": 4,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "missing-gitignore",
+              "name": "Missing .gitignore file",
+              "fullDescription": {
+                "text": "Project does not have a .gitignore file",
+                "markdown": "Project does not have a .gitignore file"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/missing-gitignore",
+              "help": {
+                "text": "Create a .gitignore file for your project.",
+                "markdown": "Create a .gitignore file for your project."
+              },
+              "properties": {
+                "category": "security-configuration",
+                "scorePenalty": 5,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "empty-catch",
+              "name": "Empty catch blocks",
+              "fullDescription": {
+                "text": "Empty catch block that silently swallows errors",
+                "markdown": "Empty catch block that silently swallows errors"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/empty-catch",
+              "help": {
+                "text": "Handle or log errors in catch blocks.",
+                "markdown": "Handle or log errors in catch blocks."
+              },
+              "properties": {
+                "category": "error-handling-reliability",
+                "scorePenalty": 4,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "no-http-timeout",
+              "name": "HTTP requests without timeout configuration",
+              "fullDescription": {
+                "text": "HTTP request without timeout: \"fetch(\"",
+                "markdown": "HTTP request without timeout: \"fetch\\(\""
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/no-timeout",
+              "help": {
+                "text": "Add a timeout to this HTTP request.",
+                "markdown": "Add a timeout to this HTTP request."
+              },
+              "properties": {
+                "category": "error-handling-reliability",
+                "scorePenalty": 3,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "unbounded-retries",
+              "name": "Unbounded retry loops",
+              "fullDescription": {
+                "text": "Unbounded retry: while(true) loop with retry",
+                "markdown": "Unbounded retry: while\\(true\\) loop with retry"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/unbounded-retries",
+              "help": {
+                "text": "Add a maximum retry count or timeout to cap retries.",
+                "markdown": "Add a maximum retry count or timeout to cap retries."
+              },
+              "properties": {
+                "category": "error-handling-reliability",
+                "scorePenalty": 4,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "process-exit",
+              "name": "process.exit() in library or module code",
+              "fullDescription": {
+                "text": "process.exit() called in module file: src/helper.js",
+                "markdown": "process.exit\\(\\) called in module file: src/helper.js"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/process-exit",
+              "help": {
+                "text": "Replace process.exit() with proper error handling.",
+                "markdown": "Replace process.exit\\(\\) with proper error handling."
+              },
+              "properties": {
+                "category": "error-handling-reliability",
+                "scorePenalty": 5,
+                "severity": "error"
+              }
+            },
+            {
+              "id": "readme-exists",
+              "name": "Missing README file",
+              "fullDescription": {
+                "text": "Project does not have a README file",
+                "markdown": "Project does not have a README file"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/readme-exists",
+              "help": {
+                "text": "Create a README.md for the project.",
+                "markdown": "Create a README.md for the project."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 5,
+                "severity": "info"
+              }
+            },
+            {
+              "id": "license-exists",
+              "name": "Missing LICENSE file",
+              "fullDescription": {
+                "text": "Project does not have a LICENSE file",
+                "markdown": "Project does not have a LICENSE file"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/license-exists",
+              "help": {
+                "text": "Add a LICENSE file to clarify usage rights.",
+                "markdown": "Add a LICENSE file to clarify usage rights."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 3,
+                "severity": "info"
+              }
+            },
+            {
+              "id": "contributing-exists",
+              "name": "Missing CONTRIBUTING file",
+              "fullDescription": {
+                "text": "Project does not have a CONTRIBUTING file",
+                "markdown": "Project does not have a CONTRIBUTING file"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/contributing-exists",
+              "help": {
+                "text": "Add a CONTRIBUTING.md file.",
+                "markdown": "Add a CONTRIBUTING.md file."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 1,
+                "severity": "info"
+              }
+            },
+            {
+              "id": "code-of-conduct",
+              "name": "Missing CODE_OF_CONDUCT file",
+              "fullDescription": {
+                "text": "Project does not have a CODE_OF_CONDUCT file",
+                "markdown": "Project does not have a CODE\\_OF\\_CONDUCT file"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/code-of-conduct",
+              "help": {
+                "text": "Add a CODE_OF_CONDUCT.md file.",
+                "markdown": "Add a CODE\\_OF\\_CONDUCT.md file."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 1,
+                "severity": "info"
+              }
+            },
+            {
+              "id": "changelog-exists",
+              "name": "Missing CHANGELOG file",
+              "fullDescription": {
+                "text": "Project does not have a CHANGELOG file",
+                "markdown": "Project does not have a CHANGELOG file"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/changelog-exists",
+              "help": {
+                "text": "Add a CHANGELOG.md file.",
+                "markdown": "Add a CHANGELOG.md file."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 2,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "ci-workflow",
+              "name": "Missing CI/CD workflow",
+              "fullDescription": {
+                "text": "Project does not have a CI/CD workflow configuration",
+                "markdown": "Project does not have a CI/CD workflow configuration"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/ci-workflow",
+              "help": {
+                "text": "Set up a CI workflow (GitHub Actions, GitLab CI, etc.).",
+                "markdown": "Set up a CI workflow \\(GitHub Actions, GitLab CI, etc.\\)."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 3,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "lockfile-exists",
+              "name": "Missing lockfile for package manager",
+              "fullDescription": {
+                "text": "Missing lockfile for Node.js/TypeScript project",
+                "markdown": "Missing lockfile for Node.js/TypeScript project"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/lockfile-exists",
+              "help": {
+                "text": "Generate and commit a lockfile for your package manager.",
+                "markdown": "Generate and commit a lockfile for your package manager."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 4,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "env-documented",
+              "name": "Environment variables not documented",
+              "fullDescription": {
+                "text": "Environment variables are not documented",
+                "markdown": "Environment variables are not documented"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/env-documented",
+              "help": {
+                "text": "Create a .env.example file with all required environment variables documented.",
+                "markdown": "Create a .env.example file with all required environment variables documented."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 3,
+                "severity": "info"
+              }
+            },
+            {
+              "id": "package-metadata",
+              "name": "Incorrect or missing package.json metadata",
+              "fullDescription": {
+                "text": "2 metadata issue(s) found: Missing package license; Missing repository URL",
+                "markdown": "2 metadata issue\\(s\\) found: Missing package license; Missing repository URL"
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/package-metadata",
+              "help": {
+                "text": "Fix the package.json metadata fields listed above.",
+                "markdown": "Fix the package.json metadata fields listed above."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 4,
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "broken-scripts",
+              "name": "Broken or placeholder script definitions in package.json",
+              "fullDescription": {
+                "text": "Suspicious script \"test\": \"echo \"Error: no test specified\" && exit 1\"",
+                "markdown": "Suspicious script \"test\": \"echo \"Error: no test specified\" && exit 1\""
+              },
+              "helpUri": "https://repoproof.dev/docs/rules/broken-scripts",
+              "help": {
+                "text": "Fix the \"test\" script with a valid command.",
+                "markdown": "Fix the \"test\" script with a valid command."
+              },
+              "properties": {
+                "category": "repository-readiness",
+                "scorePenalty": 3,
+                "severity": "error"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "todo-fixme",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "TODO/FIXME markers in source code: File contains 4 TODO/FIXME markers",
+            "markdown": "**TODO/FIXME markers in source code**: File contains 4 TODO/FIXME markers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 76
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 78
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 79
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 80
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 2,
+            "remediation": "Remove or resolve all TODO/FIXME markers."
+          }
+        },
+        {
+          "ruleId": "todo-fixme",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "TODO/FIXME markers in source code: File contains 3 TODO/FIXME markers",
+            "markdown": "**TODO/FIXME markers in source code**: File contains 3 TODO/FIXME markers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 11
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 2,
+            "remediation": "Remove or resolve all TODO/FIXME markers."
+          }
+        },
+        {
+          "ruleId": "todo-fixme",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "TODO/FIXME markers in source code: File contains 6 TODO/FIXME markers",
+            "markdown": "**TODO/FIXME markers in source code**: File contains 6 TODO/FIXME markers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 8
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 11
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 12
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 13
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 76
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 2,
+            "remediation": "Remove or resolve all TODO/FIXME markers."
+          }
+        },
+        {
+          "ruleId": "not-implemented",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "Not implemented code paths: Found not-implemented code path: \"throw new Error('not implemented')\"",
+            "markdown": "**Not implemented code paths**: Found not-implemented code path: \"throw new Error\\('not implemented'\\)\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 33
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 5,
+            "remediation": "Implement the missing functionality."
+          }
+        },
+        {
+          "ruleId": "not-implemented",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "Not implemented code paths: Found not-implemented code path: \"throw new Error('not implemented')\"",
+            "markdown": "**Not implemented code paths**: Found not-implemented code path: \"throw new Error\\('not implemented'\\)\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 37
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 5,
+            "remediation": "Implement the missing functionality."
+          }
+        },
+        {
+          "ruleId": "not-implemented",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "Not implemented code paths: Found not-implemented code path: \"throw new Error('not implemented')\"",
+            "markdown": "**Not implemented code paths**: Found not-implemented code path: \"throw new Error\\('not implemented'\\)\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 17
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 5,
+            "remediation": "Implement the missing functionality."
+          }
+        },
+        {
+          "ruleId": "empty-function",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Empty function bodies: Found empty function body: it('', function() {}",
+            "markdown": "**Empty function bodies**: Found empty function body: it\\('', function\\(\\) {}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Implement or remove the empty function."
+          }
+        },
+        {
+          "ruleId": "empty-function",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Empty function bodies: Found empty function body: it('', function() {}",
+            "markdown": "**Empty function bodies**: Found empty function body: it\\('', function\\(\\) {}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Implement or remove the empty function."
+          }
+        },
+        {
+          "ruleId": "empty-function",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Empty function bodies: Found empty function body: it('', function() {}",
+            "markdown": "**Empty function bodies**: Found empty function body: it\\('', function\\(\\) {}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Implement or remove the empty function."
+          }
+        },
+        {
+          "ruleId": "empty-function",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Empty function bodies: Found empty function body: beforeEach(function() {}",
+            "markdown": "**Empty function bodies**: Found empty function body: beforeEach\\(function\\(\\) {}"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Implement or remove the empty function."
+          }
+        },
+        {
+          "ruleId": "placeholder-text",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "Placeholder text in source code: File contains 2 placeholder text instance(s)",
+            "markdown": "**Placeholder text in source code**: File contains 2 placeholder text instance\\(s\\)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 90
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 92
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 2,
+            "remediation": "Replace placeholder text with actual content."
+          }
+        },
+        {
+          "ruleId": "placeholder-text",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "Placeholder text in source code: File contains 3 placeholder text instance(s)",
+            "markdown": "**Placeholder text in source code**: File contains 3 placeholder text instance\\(s\\)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 201
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 203
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 206
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 2,
+            "remediation": "Replace placeholder text with actual content."
+          }
+        },
+        {
+          "ruleId": "placeholder-text",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "Placeholder text in source code: File contains 4 placeholder text instance(s)",
+            "markdown": "**Placeholder text in source code**: File contains 4 placeholder text instance\\(s\\)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 264
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 266
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 270
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 273
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 2,
+            "remediation": "Replace placeholder text with actual content."
+          }
+        },
+        {
+          "ruleId": "commented-code",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "Commented-out code blocks: Found 16 consecutive lines of commented code",
+            "markdown": "**Commented-out code blocks**: Found 16 consecutive lines of commented code"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 41
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Remove commented-out code."
+          }
+        },
+        {
+          "ruleId": "commented-code",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "Commented-out code blocks: Found 6 consecutive lines of commented code",
+            "markdown": "**Commented-out code blocks**: Found 6 consecutive lines of commented code"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 75
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Remove commented-out code."
+          }
+        },
+        {
+          "ruleId": "commented-code",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "Commented-out code blocks: Found 5 consecutive lines of commented code",
+            "markdown": "**Commented-out code blocks**: Found 5 consecutive lines of commented code"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Remove commented-out code."
+          }
+        },
+        {
+          "ruleId": "commented-code",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "Commented-out code blocks: Found 32 consecutive lines of commented code",
+            "markdown": "**Commented-out code blocks**: Found 32 consecutive lines of commented code"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 33
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Remove commented-out code."
+          }
+        },
+        {
+          "ruleId": "mock-data",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "Hardcoded mock data in source code: Suspicious mock/test data: \"admin\"",
+            "markdown": "**Hardcoded mock data in source code**: Suspicious mock/test data: \"admin\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 71
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Remove mock data from production code."
+          }
+        },
+        {
+          "ruleId": "mock-data",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "Hardcoded mock data in source code: Suspicious mock/test data: \"admin\"",
+            "markdown": "**Hardcoded mock data in source code**: Suspicious mock/test data: \"admin\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 107
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Remove mock data from production code."
+          }
+        },
+        {
+          "ruleId": "mock-data",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "Hardcoded mock data in source code: Suspicious mock/test data: \"admin\"",
+            "markdown": "**Hardcoded mock data in source code**: Suspicious mock/test data: \"admin\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 279
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "incomplete-implementation",
+            "scorePenalty": 3,
+            "remediation": "Remove mock data from production code."
+          }
+        },
+        {
+          "ruleId": "missing-tests",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "Missing test files for source files: Missing test files for 1 source file(s) in src",
+            "markdown": "**Missing test files for source files**: Missing test files for 1 source file\\(s\\) in src"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "tests",
+            "scorePenalty": 3,
+            "remediation": "Add test files for: src/helper.js"
+          }
+        },
+        {
+          "ruleId": "missing-tests",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "Missing test files for source files: Missing test files for 1 source file(s) in src/__tests__",
+            "markdown": "**Missing test files for source files**: Missing test files for 1 source file\\(s\\) in src/\\_\\_tests\\_\\_"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "tests",
+            "scorePenalty": 3,
+            "remediation": "Add test files for: src/__tests__/test.js"
+          }
+        },
+        {
+          "ruleId": "test-echo-command",
+          "ruleIndex": 7,
+          "level": "error",
+          "message": {
+            "text": "Test script is an echo placeholder: Test script is just an echo command: \"echo \"Error: no test specified\" && exit 1\"",
+            "markdown": "**Test script is an echo placeholder**: Test script is just an echo command: \"echo \"Error: no test specified\" && exit 1\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "tests",
+            "scorePenalty": 8,
+            "remediation": "Replace echo with actual test runner command."
+          }
+        },
+        {
+          "ruleId": "hardcoded-secrets",
+          "ruleIndex": 8,
+          "level": "error",
+          "message": {
+            "text": "Hardcoded secrets in source code: API key detected in source code in src/__tests__/test.js",
+            "markdown": "**Hardcoded secrets in source code**: API key detected in source code in src/\\_\\_tests\\_\\_/test.js"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 85
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 10,
+            "remediation": "Remove hardcoded secret and use environment variables."
+          }
+        },
+        {
+          "ruleId": "hardcoded-secrets",
+          "ruleIndex": 8,
+          "level": "error",
+          "message": {
+            "text": "Hardcoded secrets in source code: Secret key detected in source code in src/__tests__/test.js",
+            "markdown": "**Hardcoded secrets in source code**: Secret key detected in source code in src/\\_\\_tests\\_\\_/test.js"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 87
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 10,
+            "remediation": "Remove hardcoded secret and use environment variables."
+          }
+        },
+        {
+          "ruleId": "hardcoded-secrets",
+          "ruleIndex": 8,
+          "level": "error",
+          "message": {
+            "text": "Hardcoded secrets in source code: API key detected in source code in src/helper.js",
+            "markdown": "**Hardcoded secrets in source code**: API key detected in source code in src/helper.js"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 75
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 10,
+            "remediation": "Remove hardcoded secret and use environment variables."
+          }
+        },
+        {
+          "ruleId": "unsafe-eval",
+          "ruleIndex": 9,
+          "level": "error",
+          "message": {
+            "text": "Use of eval() or dynamic code execution: Use of eval( detected",
+            "markdown": "**Use of eval\\(\\) or dynamic code execution**: Use of eval\\( detected"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 157
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 5,
+            "remediation": "Replace eval/dynamic execution with safer alternatives."
+          }
+        },
+        {
+          "ruleId": "unsafe-eval",
+          "ruleIndex": 9,
+          "level": "error",
+          "message": {
+            "text": "Use of eval() or dynamic code execution: Use of eval( detected",
+            "markdown": "**Use of eval\\(\\) or dynamic code execution**: Use of eval\\( detected"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 162
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 5,
+            "remediation": "Replace eval/dynamic execution with safer alternatives."
+          }
+        },
+        {
+          "ruleId": "unsafe-eval",
+          "ruleIndex": 9,
+          "level": "error",
+          "message": {
+            "text": "Use of eval() or dynamic code execution: Use of eval( detected",
+            "markdown": "**Use of eval\\(\\) or dynamic code execution**: Use of eval\\( detected"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 193
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 5,
+            "remediation": "Replace eval/dynamic execution with safer alternatives."
+          }
+        },
+        {
+          "ruleId": "wildcard-cors",
+          "ruleIndex": 10,
+          "level": "error",
+          "message": {
+            "text": "Wildcard CORS configuration: Wildcard CORS configuration found: \"Header('Access-Control-Allow-Origin', '*'\"",
+            "markdown": "**Wildcard CORS configuration**: Wildcard CORS configuration found: \"Header\\('Access-Control-Allow-Origin', '\\*'\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 169
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 5,
+            "remediation": "Restrict CORS to specific origins instead of using '*'."
+          }
+        },
+        {
+          "ruleId": "wildcard-cors",
+          "ruleIndex": 10,
+          "level": "error",
+          "message": {
+            "text": "Wildcard CORS configuration: Wildcard CORS configuration found: \"Header('Access-Control-Allow-Origin', '*'\"",
+            "markdown": "**Wildcard CORS configuration**: Wildcard CORS configuration found: \"Header\\('Access-Control-Allow-Origin', '\\*'\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 212
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 5,
+            "remediation": "Restrict CORS to specific origins instead of using '*'."
+          }
+        },
+        {
+          "ruleId": "debug-enabled",
+          "ruleIndex": 11,
+          "level": "warning",
+          "message": {
+            "text": "Debug mode enabled by default: Debug/development mode enabled: \"debug: true,\"",
+            "markdown": "**Debug mode enabled by default**: Debug/development mode enabled: \"debug: true,\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 246
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 4,
+            "remediation": "Disable debug mode for production deployments."
+          }
+        },
+        {
+          "ruleId": "debug-enabled",
+          "ruleIndex": 11,
+          "level": "warning",
+          "message": {
+            "text": "Debug mode enabled by default: Debug/development mode enabled: \"logLevel: 'debug',\"",
+            "markdown": "**Debug mode enabled by default**: Debug/development mode enabled: \"logLevel: 'debug',\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.js"
+                },
+                "region": {
+                  "startLine": 247
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 4,
+            "remediation": "Disable debug mode for production deployments."
+          }
+        },
+        {
+          "ruleId": "missing-gitignore",
+          "ruleIndex": 12,
+          "level": "warning",
+          "message": {
+            "text": "Missing .gitignore file: Project does not have a .gitignore file",
+            "markdown": "**Missing .gitignore file**: Project does not have a .gitignore file"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "REPORT_ROOT"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "security-configuration",
+            "scorePenalty": 5,
+            "remediation": "Create a .gitignore file for your project."
+          }
+        },
+        {
+          "ruleId": "empty-catch",
+          "ruleIndex": 13,
+          "level": "warning",
+          "message": {
+            "text": "Empty catch blocks: Empty catch block that silently swallows errors",
+            "markdown": "**Empty catch blocks**: Empty catch block that silently swallows errors"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 13
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 4,
+            "remediation": "Handle or log errors in catch blocks."
+          }
+        },
+        {
+          "ruleId": "empty-catch",
+          "ruleIndex": 13,
+          "level": "warning",
+          "message": {
+            "text": "Empty catch blocks: Empty catch block that silently swallows errors",
+            "markdown": "**Empty catch blocks**: Empty catch block that silently swallows errors"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 18
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 4,
+            "remediation": "Handle or log errors in catch blocks."
+          }
+        },
+        {
+          "ruleId": "empty-catch",
+          "ruleIndex": 13,
+          "level": "warning",
+          "message": {
+            "text": "Empty catch blocks: Empty catch block that silently swallows errors",
+            "markdown": "**Empty catch blocks**: Empty catch block that silently swallows errors"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/__tests__/test.js"
+                },
+                "region": {
+                  "startLine": 13
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 4,
+            "remediation": "Handle or log errors in catch blocks."
+          }
+        },
+        {
+          "ruleId": "no-http-timeout",
+          "ruleIndex": 14,
+          "level": "warning",
+          "message": {
+            "text": "HTTP requests without timeout configuration: HTTP request without timeout: \"fetch(\"",
+            "markdown": "**HTTP requests without timeout configuration**: HTTP request without timeout: \"fetch\\(\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 117
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 3,
+            "remediation": "Add a timeout to this HTTP request."
+          }
+        },
+        {
+          "ruleId": "no-http-timeout",
+          "ruleIndex": 14,
+          "level": "warning",
+          "message": {
+            "text": "HTTP requests without timeout configuration: HTTP request without timeout: \"fetch(\"",
+            "markdown": "**HTTP requests without timeout configuration**: HTTP request without timeout: \"fetch\\(\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 122
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 3,
+            "remediation": "Add a timeout to this HTTP request."
+          }
+        },
+        {
+          "ruleId": "no-http-timeout",
+          "ruleIndex": 14,
+          "level": "warning",
+          "message": {
+            "text": "HTTP requests without timeout configuration: HTTP request without timeout: \"fetch(\"",
+            "markdown": "**HTTP requests without timeout configuration**: HTTP request without timeout: \"fetch\\(\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 134
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 3,
+            "remediation": "Add a timeout to this HTTP request."
+          }
+        },
+        {
+          "ruleId": "unbounded-retries",
+          "ruleIndex": 15,
+          "level": "warning",
+          "message": {
+            "text": "Unbounded retry loops: Unbounded retry: while(true) loop with retry",
+            "markdown": "**Unbounded retry loops**: Unbounded retry: while\\(true\\) loop with retry"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 132
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 4,
+            "remediation": "Add a maximum retry count or timeout to cap retries."
+          }
+        },
+        {
+          "ruleId": "unbounded-retries",
+          "ruleIndex": 15,
+          "level": "warning",
+          "message": {
+            "text": "Unbounded retry loops: Unbounded retry: while(true) loop with retry",
+            "markdown": "**Unbounded retry loops**: Unbounded retry: while\\(true\\) loop with retry"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 143
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 4,
+            "remediation": "Add a maximum retry count or timeout to cap retries."
+          }
+        },
+        {
+          "ruleId": "process-exit",
+          "ruleIndex": 16,
+          "level": "error",
+          "message": {
+            "text": "process.exit() in library or module code: process.exit() called in module file: src/helper.js",
+            "markdown": "**process.exit\\(\\) in library or module code**: process.exit\\(\\) called in module file: src/helper.js"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 179
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 5,
+            "remediation": "Replace process.exit() with proper error handling."
+          }
+        },
+        {
+          "ruleId": "process-exit",
+          "ruleIndex": 16,
+          "level": "error",
+          "message": {
+            "text": "process.exit() in library or module code: process.exit() called in module file: src/helper.js",
+            "markdown": "**process.exit\\(\\) in library or module code**: process.exit\\(\\) called in module file: src/helper.js"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/helper.js"
+                },
+                "region": {
+                  "startLine": 184
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "error-handling-reliability",
+            "scorePenalty": 5,
+            "remediation": "Replace process.exit() with proper error handling."
+          }
+        },
+        {
+          "ruleId": "readme-exists",
+          "ruleIndex": 17,
+          "level": "note",
+          "message": {
+            "text": "Missing README file: Project does not have a README file",
+            "markdown": "**Missing README file**: Project does not have a README file"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "REPORT_ROOT"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 5,
+            "remediation": "Create a README.md for the project."
+          }
+        },
+        {
+          "ruleId": "license-exists",
+          "ruleIndex": 18,
+          "level": "note",
+          "message": {
+            "text": "Missing LICENSE file: Project does not have a LICENSE file",
+            "markdown": "**Missing LICENSE file**: Project does not have a LICENSE file"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "REPORT_ROOT"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 3,
+            "remediation": "Add a LICENSE file to clarify usage rights."
+          }
+        },
+        {
+          "ruleId": "contributing-exists",
+          "ruleIndex": 19,
+          "level": "note",
+          "message": {
+            "text": "Missing CONTRIBUTING file: Project does not have a CONTRIBUTING file",
+            "markdown": "**Missing CONTRIBUTING file**: Project does not have a CONTRIBUTING file"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "REPORT_ROOT"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 1,
+            "remediation": "Add a CONTRIBUTING.md file."
+          }
+        },
+        {
+          "ruleId": "code-of-conduct",
+          "ruleIndex": 20,
+          "level": "note",
+          "message": {
+            "text": "Missing CODE_OF_CONDUCT file: Project does not have a CODE_OF_CONDUCT file",
+            "markdown": "**Missing CODE\\_OF\\_CONDUCT file**: Project does not have a CODE\\_OF\\_CONDUCT file"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "REPORT_ROOT"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 1,
+            "remediation": "Add a CODE_OF_CONDUCT.md file."
+          }
+        },
+        {
+          "ruleId": "changelog-exists",
+          "ruleIndex": 21,
+          "level": "warning",
+          "message": {
+            "text": "Missing CHANGELOG file: Project does not have a CHANGELOG file",
+            "markdown": "**Missing CHANGELOG file**: Project does not have a CHANGELOG file"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "REPORT_ROOT"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 2,
+            "remediation": "Add a CHANGELOG.md file."
+          }
+        },
+        {
+          "ruleId": "ci-workflow",
+          "ruleIndex": 22,
+          "level": "warning",
+          "message": {
+            "text": "Missing CI/CD workflow: Project does not have a CI/CD workflow configuration",
+            "markdown": "**Missing CI/CD workflow**: Project does not have a CI/CD workflow configuration"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "REPORT_ROOT"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 3,
+            "remediation": "Set up a CI workflow (GitHub Actions, GitLab CI, etc.)."
+          }
+        },
+        {
+          "ruleId": "lockfile-exists",
+          "ruleIndex": 23,
+          "level": "warning",
+          "message": {
+            "text": "Missing lockfile for package manager: Missing lockfile for Node.js/TypeScript project",
+            "markdown": "**Missing lockfile for package manager**: Missing lockfile for Node.js/TypeScript project"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "REPORT_ROOT"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 4,
+            "remediation": "Generate and commit a lockfile for your package manager."
+          }
+        },
+        {
+          "ruleId": "env-documented",
+          "ruleIndex": 24,
+          "level": "note",
+          "message": {
+            "text": "Environment variables not documented: Environment variables are not documented",
+            "markdown": "**Environment variables not documented**: Environment variables are not documented"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "REPORT_ROOT"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 3,
+            "remediation": "Create a .env.example file with all required environment variables documented."
+          }
+        },
+        {
+          "ruleId": "package-metadata",
+          "ruleIndex": 25,
+          "level": "warning",
+          "message": {
+            "text": "Incorrect or missing package.json metadata: 2 metadata issue(s) found: Missing package license; Missing repository URL",
+            "markdown": "**Incorrect or missing package.json metadata**: 2 metadata issue\\(s\\) found: Missing package license; Missing repository URL"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 4,
+            "remediation": "Fix the package.json metadata fields listed above."
+          }
+        },
+        {
+          "ruleId": "broken-scripts",
+          "ruleIndex": 26,
+          "level": "error",
+          "message": {
+            "text": "Broken or placeholder script definitions in package.json: Suspicious script \"test\": \"echo \"Error: no test specified\" && exit 1\"",
+            "markdown": "**Broken or placeholder script definitions in package.json**: Suspicious script \"test\": \"echo \"Error: no test specified\" && exit 1\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 3,
+            "remediation": "Fix the \"test\" script with a valid command."
+          }
+        },
+        {
+          "ruleId": "broken-scripts",
+          "ruleIndex": 26,
+          "level": "error",
+          "message": {
+            "text": "Broken or placeholder script definitions in package.json: Suspicious script \"lint\": \"echo \"Linting not configured yet\"\"",
+            "markdown": "**Broken or placeholder script definitions in package.json**: Suspicious script \"lint\": \"echo \"Linting not configured yet\"\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 3,
+            "remediation": "Fix the \"lint\" script with a valid command."
+          }
+        },
+        {
+          "ruleId": "broken-scripts",
+          "ruleIndex": 26,
+          "level": "error",
+          "message": {
+            "text": "Broken or placeholder script definitions in package.json: Suspicious script \"build\": \"echo \"Build step placeholder\"\"",
+            "markdown": "**Broken or placeholder script definitions in package.json**: Suspicious script \"build\": \"echo \"Build step placeholder\"\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "package.json"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "category": "repository-readiness",
+            "scorePenalty": 3,
+            "remediation": "Fix the \"build\" script with a valid command."
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "endTimeUtc": "2026-07-22T03:15:40.198Z"
+        }
+      ],
+      "properties": {
+        "score": 6,
+        "grade": "F",
+        "maxScore": 100,
+        "totalFindings": 56
+      }
+    }
+  ]
+}

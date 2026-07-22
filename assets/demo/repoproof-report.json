@@ -1,0 +1,1041 @@
+{
+  "$schema": "https://raw.githubusercontent.com/MadB0i/RepoProof/main/schemas/report-v1.json",
+  "version": "1.0.0",
+  "timestamp": "2026-07-22T03:15:39.307Z",
+  "score": 6,
+  "grade": "F",
+  "maxScore": 100,
+  "projectType": {
+    "languages": [
+      "JavaScript"
+    ],
+    "hasPackageJson": true,
+    "hasTsconfig": false,
+    "hasPyprojectToml": false,
+    "hasRequirementsTxt": false,
+    "hasCargoToml": false,
+    "hasGoMod": false,
+    "hasDockerfile": false,
+    "hasDockerCompose": false,
+    "hasReadme": false,
+    "hasLicense": false,
+    "hasContributing": false,
+    "hasCodeOfConduct": false,
+    "hasChangelog": false,
+    "hasCiWorkflow": false,
+    "hasGitignore": false,
+    "hasLockfile": false,
+    "hasTestDir": false,
+    "hasEnvExample": false,
+    "hasEditorConfig": false
+  },
+  "categoryScores": {
+    "incomplete-implementation": {
+      "score": 0,
+      "maxScore": 20,
+      "findings": 20
+    },
+    "tests": {
+      "score": 6,
+      "maxScore": 20,
+      "findings": 3
+    },
+    "security-configuration": {
+      "score": 0,
+      "maxScore": 30,
+      "findings": 11
+    },
+    "error-handling-reliability": {
+      "score": 0,
+      "maxScore": 15,
+      "findings": 10
+    },
+    "repository-readiness": {
+      "score": 0,
+      "maxScore": 15,
+      "findings": 12
+    }
+  },
+  "findings": [
+    {
+      "id": "todo-fixme",
+      "title": "TODO/FIXME markers in source code",
+      "description": "File contains 4 TODO/FIXME markers",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 76,
+          "snippet": "// [todo-fixme]"
+        },
+        {
+          "file": "src/__tests__/test.js",
+          "line": 78,
+          "snippet": "// TODO: add integration tests for the full flow"
+        },
+        {
+          "file": "src/__tests__/test.js",
+          "line": 79,
+          "snippet": "// FIXME: these unit tests don't cover edge cases"
+        },
+        {
+          "file": "src/__tests__/test.js",
+          "line": 80,
+          "snippet": "// TODO: add performance benchmarks"
+        }
+      ],
+      "remediation": "Remove or resolve all TODO/FIXME markers.",
+      "scorePenalty": 2,
+      "docUrl": "https://repoproof.dev/docs/rules/todo-fixme"
+    },
+    {
+      "id": "todo-fixme",
+      "title": "TODO/FIXME markers in source code",
+      "description": "File contains 3 TODO/FIXME markers",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 8,
+          "snippet": "// [todo-fixme]"
+        },
+        {
+          "file": "src/helper.js",
+          "line": 10,
+          "snippet": "// TODO: consolidate all helper functions into a utility module"
+        },
+        {
+          "file": "src/helper.js",
+          "line": 11,
+          "snippet": "// FIXME: this file has no unit tests"
+        }
+      ],
+      "remediation": "Remove or resolve all TODO/FIXME markers.",
+      "scorePenalty": 2,
+      "docUrl": "https://repoproof.dev/docs/rules/todo-fixme"
+    },
+    {
+      "id": "todo-fixme",
+      "title": "TODO/FIXME markers in source code",
+      "description": "File contains 6 TODO/FIXME markers",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/index.js",
+          "line": 8,
+          "snippet": "// [todo-fixme] TODO and FIXME comments"
+        },
+        {
+          "file": "src/index.js",
+          "line": 10,
+          "snippet": "// TODO: refactor this entire module into smaller pieces"
+        },
+        {
+          "file": "src/index.js",
+          "line": 11,
+          "snippet": "// FIXME: the error handling here is completely broken"
+        },
+        {
+          "file": "src/index.js",
+          "line": 12,
+          "snippet": "// TODO: add input validation before processing requests"
+        },
+        {
+          "file": "src/index.js",
+          "line": 13,
+          "snippet": "// FIXME: this approach has a race condition"
+        },
+        {
+          "file": "src/index.js",
+          "line": 76,
+          "snippet": "//   // TODO: remove this when new batch processor is stable"
+        }
+      ],
+      "remediation": "Remove or resolve all TODO/FIXME markers.",
+      "scorePenalty": 2,
+      "docUrl": "https://repoproof.dev/docs/rules/todo-fixme"
+    },
+    {
+      "id": "not-implemented",
+      "title": "Not implemented code paths",
+      "description": "Found not-implemented code path: \"throw new Error('not implemented')\"",
+      "severity": "error",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 33,
+          "snippet": "throw new Error('[REDACTED]')"
+        }
+      ],
+      "remediation": "Implement the missing functionality.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/not-implemented"
+    },
+    {
+      "id": "not-implemented",
+      "title": "Not implemented code paths",
+      "description": "Found not-implemented code path: \"throw new Error('not implemented')\"",
+      "severity": "error",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 37,
+          "snippet": "throw new Error('[REDACTED]')"
+        }
+      ],
+      "remediation": "Implement the missing functionality.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/not-implemented"
+    },
+    {
+      "id": "not-implemented",
+      "title": "Not implemented code paths",
+      "description": "Found not-implemented code path: \"throw new Error('not implemented')\"",
+      "severity": "error",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 17,
+          "snippet": "throw new Error('[REDACTED]')"
+        }
+      ],
+      "remediation": "Implement the missing functionality.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/not-implemented"
+    },
+    {
+      "id": "empty-function",
+      "title": "Empty function bodies",
+      "description": "Found empty function body: it('', function() {}",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 3,
+          "snippet": "it('', function() {}"
+        }
+      ],
+      "remediation": "Implement or remove the empty function.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/empty-function"
+    },
+    {
+      "id": "empty-function",
+      "title": "Empty function bodies",
+      "description": "Found empty function body: it('', function() {}",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 4,
+          "snippet": "it('', function() {}"
+        }
+      ],
+      "remediation": "Implement or remove the empty function.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/empty-function"
+    },
+    {
+      "id": "empty-function",
+      "title": "Empty function bodies",
+      "description": "Found empty function body: it('', function() {}",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 4,
+          "snippet": "it('', function() {}"
+        }
+      ],
+      "remediation": "Implement or remove the empty function.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/empty-function"
+    },
+    {
+      "id": "empty-function",
+      "title": "Empty function bodies",
+      "description": "Found empty function body: beforeEach(function() {}",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 5,
+          "snippet": "beforeEach(function() {}"
+        }
+      ],
+      "remediation": "Implement or remove the empty function.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/empty-function"
+    },
+    {
+      "id": "placeholder-text",
+      "title": "Placeholder text in source code",
+      "description": "File contains 2 placeholder text instance(s)",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 90,
+          "snippet": "// [placeholder-text]"
+        },
+        {
+          "file": "src/__tests__/test.js",
+          "line": 92,
+          "snippet": "var testDescription = '[REDACTED]';"
+        }
+      ],
+      "remediation": "Replace placeholder text with actual content.",
+      "scorePenalty": 2,
+      "docUrl": "https://repoproof.dev/docs/rules/placeholder-text"
+    },
+    {
+      "id": "placeholder-text",
+      "title": "Placeholder text in source code",
+      "description": "File contains 3 placeholder text instance(s)",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 201,
+          "snippet": "// [placeholder-text]"
+        },
+        {
+          "file": "src/helper.js",
+          "line": 203,
+          "snippet": "var introText = '[REDACTED]' +"
+        },
+        {
+          "file": "src/helper.js",
+          "line": 206,
+          "snippet": "var fallbackMessage = '[REDACTED]';"
+        }
+      ],
+      "remediation": "Replace placeholder text with actual content.",
+      "scorePenalty": 2,
+      "docUrl": "https://repoproof.dev/docs/rules/placeholder-text"
+    },
+    {
+      "id": "placeholder-text",
+      "title": "Placeholder text in source code",
+      "description": "File contains 4 placeholder text instance(s)",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/index.js",
+          "line": 264,
+          "snippet": "// [placeholder-text] Lorem ipsum and filler text"
+        },
+        {
+          "file": "src/index.js",
+          "line": 266,
+          "snippet": "var helpText = '[REDACTED]' +"
+        },
+        {
+          "file": "src/index.js",
+          "line": 270,
+          "snippet": "var defaultDescription = '[REDACTED]' +"
+        },
+        {
+          "file": "src/index.js",
+          "line": 273,
+          "snippet": "var errorMessage = '[REDACTED]';  // pangram placeholder"
+        }
+      ],
+      "remediation": "Replace placeholder text with actual content.",
+      "scorePenalty": 2,
+      "docUrl": "https://repoproof.dev/docs/rules/placeholder-text"
+    },
+    {
+      "id": "commented-code",
+      "title": "Commented-out code blocks",
+      "description": "Found 16 consecutive lines of commented code",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 41,
+          "snippet": "// --------------------------------------------------; // [commented-code]; // -----------------------------------------"
+        }
+      ],
+      "remediation": "Remove commented-out code.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/commented-code"
+    },
+    {
+      "id": "commented-code",
+      "title": "Commented-out code blocks",
+      "description": "Found 6 consecutive lines of commented code",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 75,
+          "snippet": "// --------------------------------------------------; // [todo-fixme]; // ---------------------------------------------"
+        }
+      ],
+      "remediation": "Remove commented-out code.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/commented-code"
+    },
+    {
+      "id": "commented-code",
+      "title": "Commented-out code blocks",
+      "description": "Found 5 consecutive lines of commented code",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 7,
+          "snippet": "// --------------------------------------------------; // [todo-fixme]; // ---------------------------------------------"
+        }
+      ],
+      "remediation": "Remove commented-out code.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/commented-code"
+    },
+    {
+      "id": "commented-code",
+      "title": "Commented-out code blocks",
+      "description": "Found 32 consecutive lines of commented code",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 33,
+          "snippet": "// --------------------------------------------------; // [commented-code]; // -----------------------------------------"
+        }
+      ],
+      "remediation": "Remove commented-out code.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/commented-code"
+    },
+    {
+      "id": "mock-data",
+      "title": "Hardcoded mock data in source code",
+      "description": "Suspicious mock/test data: \"admin\"",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 71,
+          "snippet": "var MONGO_URI = '[REDACTED]';"
+        }
+      ],
+      "remediation": "Remove mock data from production code.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/mock-data"
+    },
+    {
+      "id": "mock-data",
+      "title": "Hardcoded mock data in source code",
+      "description": "Suspicious mock/test data: \"admin\"",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/index.js",
+          "line": 107,
+          "snippet": "user: '[REDACTED]',"
+        }
+      ],
+      "remediation": "Remove mock data from production code.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/mock-data"
+    },
+    {
+      "id": "mock-data",
+      "title": "Hardcoded mock data in source code",
+      "description": "Suspicious mock/test data: \"admin\"",
+      "severity": "warning",
+      "category": "incomplete-implementation",
+      "evidence": [
+        {
+          "file": "src/index.js",
+          "line": 279,
+          "snippet": "{ id: 1, name: '[REDACTED]', email: '[REDACTED]', role: '[REDACTED]' },"
+        }
+      ],
+      "remediation": "Remove mock data from production code.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/mock-data"
+    },
+    {
+      "id": "missing-tests",
+      "title": "Missing test files for source files",
+      "description": "Missing test files for 1 source file(s) in src",
+      "severity": "warning",
+      "category": "tests",
+      "evidence": [
+        {
+          "file": "src/helper.js"
+        }
+      ],
+      "remediation": "Add test files for: src/helper.js",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/missing-tests"
+    },
+    {
+      "id": "missing-tests",
+      "title": "Missing test files for source files",
+      "description": "Missing test files for 1 source file(s) in src/__tests__",
+      "severity": "warning",
+      "category": "tests",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js"
+        }
+      ],
+      "remediation": "Add test files for: src/__tests__/test.js",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/missing-tests"
+    },
+    {
+      "id": "test-echo-command",
+      "title": "Test script is an echo placeholder",
+      "description": "Test script is just an echo command: \"echo \"Error: no test specified\" && exit 1\"",
+      "severity": "error",
+      "category": "tests",
+      "evidence": [
+        {
+          "file": "package.json",
+          "snippet": "\"[REDACTED]\": \"[REDACTED]\"Error: no test specified\"[REDACTED]\""
+        }
+      ],
+      "remediation": "Replace echo with actual test runner command.",
+      "scorePenalty": 8,
+      "docUrl": "https://repoproof.dev/docs/rules/test-echo-command"
+    },
+    {
+      "id": "hardcoded-secrets",
+      "title": "Hardcoded secrets in source code",
+      "description": "API key detected in source code in src/__tests__/test.js",
+      "severity": "error",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 85,
+          "snippet": "API_KEY = '[REDACTED]'"
+        }
+      ],
+      "remediation": "Remove hardcoded secret and use environment variables.",
+      "scorePenalty": 10,
+      "docUrl": "https://repoproof.dev/docs/rules/hardcoded-secrets"
+    },
+    {
+      "id": "hardcoded-secrets",
+      "title": "Hardcoded secrets in source code",
+      "description": "Secret key detected in source code in src/__tests__/test.js",
+      "severity": "error",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 87,
+          "snippet": "SECRET = '[REDACTED]'"
+        }
+      ],
+      "remediation": "Remove hardcoded secret and use environment variables.",
+      "scorePenalty": 10,
+      "docUrl": "https://repoproof.dev/docs/rules/hardcoded-secrets"
+    },
+    {
+      "id": "hardcoded-secrets",
+      "title": "Hardcoded secrets in source code",
+      "description": "API key detected in source code in src/helper.js",
+      "severity": "error",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 75,
+          "snippet": "API_KEY = '[REDACTED]'"
+        }
+      ],
+      "remediation": "Remove hardcoded secret and use environment variables.",
+      "scorePenalty": 10,
+      "docUrl": "https://repoproof.dev/docs/rules/hardcoded-secrets"
+    },
+    {
+      "id": "unsafe-eval",
+      "title": "Use of eval() or dynamic code execution",
+      "description": "Use of eval( detected",
+      "severity": "error",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 157,
+          "snippet": "var result = eval(code);"
+        }
+      ],
+      "remediation": "Replace eval/dynamic execution with safer alternatives.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/unsafe-eval"
+    },
+    {
+      "id": "unsafe-eval",
+      "title": "Use of eval() or dynamic code execution",
+      "description": "Use of eval( detected",
+      "severity": "error",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 162,
+          "snippet": "return eval('[REDACTED]\"'[REDACTED]'\")');"
+        }
+      ],
+      "remediation": "Replace eval/dynamic execution with safer alternatives.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/unsafe-eval"
+    },
+    {
+      "id": "unsafe-eval",
+      "title": "Use of eval() or dynamic code execution",
+      "description": "Use of eval( detected",
+      "severity": "error",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/index.js",
+          "line": 193,
+          "snippet": "return eval(code);"
+        }
+      ],
+      "remediation": "Replace eval/dynamic execution with safer alternatives.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/unsafe-eval"
+    },
+    {
+      "id": "wildcard-cors",
+      "title": "Wildcard CORS configuration",
+      "description": "Wildcard CORS configuration found: \"Header('Access-Control-Allow-Origin', '*'\"",
+      "severity": "error",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 169,
+          "snippet": "response.setHeader('[REDACTED]', '*');"
+        }
+      ],
+      "remediation": "Restrict CORS to specific origins instead of using '*'.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/wildcard-cors"
+    },
+    {
+      "id": "wildcard-cors",
+      "title": "Wildcard CORS configuration",
+      "description": "Wildcard CORS configuration found: \"Header('Access-Control-Allow-Origin', '*'\"",
+      "severity": "error",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/index.js",
+          "line": 212,
+          "snippet": "res.setHeader('[REDACTED]', '*');"
+        }
+      ],
+      "remediation": "Restrict CORS to specific origins instead of using '*'.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/wildcard-cors"
+    },
+    {
+      "id": "debug-enabled",
+      "title": "Debug mode enabled by default",
+      "description": "Debug/development mode enabled: \"debug: true,\"",
+      "severity": "warning",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/index.js",
+          "line": 246,
+          "snippet": "debug: true,"
+        }
+      ],
+      "remediation": "Disable debug mode for production deployments.",
+      "scorePenalty": 4,
+      "docUrl": "https://repoproof.dev/docs/rules/debug-enabled"
+    },
+    {
+      "id": "debug-enabled",
+      "title": "Debug mode enabled by default",
+      "description": "Debug/development mode enabled: \"logLevel: 'debug',\"",
+      "severity": "warning",
+      "category": "security-configuration",
+      "evidence": [
+        {
+          "file": "src/index.js",
+          "line": 247,
+          "snippet": "logLevel: '[REDACTED]',"
+        }
+      ],
+      "remediation": "Disable debug mode for production deployments.",
+      "scorePenalty": 4,
+      "docUrl": "https://repoproof.dev/docs/rules/debug-enabled"
+    },
+    {
+      "id": "missing-gitignore",
+      "title": "Missing .gitignore file",
+      "description": "Project does not have a .gitignore file",
+      "severity": "warning",
+      "category": "security-configuration",
+      "evidence": [],
+      "remediation": "Create a .gitignore file for your project.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/missing-gitignore"
+    },
+    {
+      "id": "empty-catch",
+      "title": "Empty catch blocks",
+      "description": "Empty catch block that silently swallows errors",
+      "severity": "warning",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 13,
+          "snippet": "it('[REDACTED]', function() {});"
+        }
+      ],
+      "remediation": "Handle or log errors in catch blocks.",
+      "scorePenalty": 4,
+      "docUrl": "https://repoproof.dev/docs/rules/empty-catch"
+    },
+    {
+      "id": "empty-catch",
+      "title": "Empty catch blocks",
+      "description": "Empty catch block that silently swallows errors",
+      "severity": "warning",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 18,
+          "snippet": "describe('[REDACTED]', function() {"
+        }
+      ],
+      "remediation": "Handle or log errors in catch blocks.",
+      "scorePenalty": 4,
+      "docUrl": "https://repoproof.dev/docs/rules/empty-catch"
+    },
+    {
+      "id": "empty-catch",
+      "title": "Empty catch blocks",
+      "description": "Empty catch block that silently swallows errors",
+      "severity": "warning",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/__tests__/test.js",
+          "line": 13,
+          "snippet": "it('[REDACTED]', function() {});"
+        }
+      ],
+      "remediation": "Handle or log errors in catch blocks.",
+      "scorePenalty": 4,
+      "docUrl": "https://repoproof.dev/docs/rules/empty-catch"
+    },
+    {
+      "id": "no-http-timeout",
+      "title": "HTTP requests without timeout configuration",
+      "description": "HTTP request without timeout: \"fetch(\"",
+      "severity": "warning",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 117,
+          "snippet": "var response = await fetch(endpoint);"
+        }
+      ],
+      "remediation": "Add a timeout to this HTTP request.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/no-timeout"
+    },
+    {
+      "id": "no-http-timeout",
+      "title": "HTTP requests without timeout configuration",
+      "description": "HTTP request without timeout: \"fetch(\"",
+      "severity": "warning",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 122,
+          "snippet": "var res = await fetch(url);"
+        }
+      ],
+      "remediation": "Add a timeout to this HTTP request.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/no-timeout"
+    },
+    {
+      "id": "no-http-timeout",
+      "title": "HTTP requests without timeout configuration",
+      "description": "HTTP request without timeout: \"fetch(\"",
+      "severity": "warning",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 134,
+          "snippet": "return await fetch(url);"
+        }
+      ],
+      "remediation": "Add a timeout to this HTTP request.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/no-timeout"
+    },
+    {
+      "id": "unbounded-retries",
+      "title": "Unbounded retry loops",
+      "description": "Unbounded retry: while(true) loop with retry",
+      "severity": "warning",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 132,
+          "snippet": "while (true) {"
+        }
+      ],
+      "remediation": "Add a maximum retry count or timeout to cap retries.",
+      "scorePenalty": 4,
+      "docUrl": "https://repoproof.dev/docs/rules/unbounded-retries"
+    },
+    {
+      "id": "unbounded-retries",
+      "title": "Unbounded retry loops",
+      "description": "Unbounded retry: while(true) loop with retry",
+      "severity": "warning",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 143,
+          "snippet": "while (true) {"
+        }
+      ],
+      "remediation": "Add a maximum retry count or timeout to cap retries.",
+      "scorePenalty": 4,
+      "docUrl": "https://repoproof.dev/docs/rules/unbounded-retries"
+    },
+    {
+      "id": "process-exit",
+      "title": "process.exit() in library or module code",
+      "description": "process.exit() called in module file: src/helper.js",
+      "severity": "error",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 179,
+          "snippet": "process.exit(1);"
+        }
+      ],
+      "remediation": "Replace process.exit() with proper error handling.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/process-exit"
+    },
+    {
+      "id": "process-exit",
+      "title": "process.exit() in library or module code",
+      "description": "process.exit() called in module file: src/helper.js",
+      "severity": "error",
+      "category": "error-handling-reliability",
+      "evidence": [
+        {
+          "file": "src/helper.js",
+          "line": 184,
+          "snippet": "process.exit(1);"
+        }
+      ],
+      "remediation": "Replace process.exit() with proper error handling.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/process-exit"
+    },
+    {
+      "id": "readme-exists",
+      "title": "Missing README file",
+      "description": "Project does not have a README file",
+      "severity": "info",
+      "category": "repository-readiness",
+      "evidence": [],
+      "remediation": "Create a README.md for the project.",
+      "scorePenalty": 5,
+      "docUrl": "https://repoproof.dev/docs/rules/readme-exists"
+    },
+    {
+      "id": "license-exists",
+      "title": "Missing LICENSE file",
+      "description": "Project does not have a LICENSE file",
+      "severity": "info",
+      "category": "repository-readiness",
+      "evidence": [],
+      "remediation": "Add a LICENSE file to clarify usage rights.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/license-exists"
+    },
+    {
+      "id": "contributing-exists",
+      "title": "Missing CONTRIBUTING file",
+      "description": "Project does not have a CONTRIBUTING file",
+      "severity": "info",
+      "category": "repository-readiness",
+      "evidence": [],
+      "remediation": "Add a CONTRIBUTING.md file.",
+      "scorePenalty": 1,
+      "docUrl": "https://repoproof.dev/docs/rules/contributing-exists"
+    },
+    {
+      "id": "code-of-conduct",
+      "title": "Missing CODE_OF_CONDUCT file",
+      "description": "Project does not have a CODE_OF_CONDUCT file",
+      "severity": "info",
+      "category": "repository-readiness",
+      "evidence": [],
+      "remediation": "Add a CODE_OF_CONDUCT.md file.",
+      "scorePenalty": 1,
+      "docUrl": "https://repoproof.dev/docs/rules/code-of-conduct"
+    },
+    {
+      "id": "changelog-exists",
+      "title": "Missing CHANGELOG file",
+      "description": "Project does not have a CHANGELOG file",
+      "severity": "warning",
+      "category": "repository-readiness",
+      "evidence": [],
+      "remediation": "Add a CHANGELOG.md file.",
+      "scorePenalty": 2,
+      "docUrl": "https://repoproof.dev/docs/rules/changelog-exists"
+    },
+    {
+      "id": "ci-workflow",
+      "title": "Missing CI/CD workflow",
+      "description": "Project does not have a CI/CD workflow configuration",
+      "severity": "warning",
+      "category": "repository-readiness",
+      "evidence": [],
+      "remediation": "Set up a CI workflow (GitHub Actions, GitLab CI, etc.).",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/ci-workflow"
+    },
+    {
+      "id": "lockfile-exists",
+      "title": "Missing lockfile for package manager",
+      "description": "Missing lockfile for Node.js/TypeScript project",
+      "severity": "warning",
+      "category": "repository-readiness",
+      "evidence": [],
+      "remediation": "Generate and commit a lockfile for your package manager.",
+      "scorePenalty": 4,
+      "docUrl": "https://repoproof.dev/docs/rules/lockfile-exists"
+    },
+    {
+      "id": "env-documented",
+      "title": "Environment variables not documented",
+      "description": "Environment variables are not documented",
+      "severity": "info",
+      "category": "repository-readiness",
+      "evidence": [],
+      "remediation": "Create a .env.example file with all required environment variables documented.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/env-documented"
+    },
+    {
+      "id": "package-metadata",
+      "title": "Incorrect or missing package.json metadata",
+      "description": "2 metadata issue(s) found: Missing package license; Missing repository URL",
+      "severity": "warning",
+      "category": "repository-readiness",
+      "evidence": [
+        {
+          "file": "package.json",
+          "snippet": "Missing package license"
+        },
+        {
+          "file": "package.json",
+          "snippet": "Missing repository URL"
+        }
+      ],
+      "remediation": "Fix the package.json metadata fields listed above.",
+      "scorePenalty": 4,
+      "docUrl": "https://repoproof.dev/docs/rules/package-metadata"
+    },
+    {
+      "id": "broken-scripts",
+      "title": "Broken or placeholder script definitions in package.json",
+      "description": "Suspicious script \"test\": \"echo \"Error: no test specified\" && exit 1\"",
+      "severity": "error",
+      "category": "repository-readiness",
+      "evidence": [
+        {
+          "file": "package.json",
+          "snippet": "\"[REDACTED]\": \"[REDACTED]\"Error: no test specified\"[REDACTED]\""
+        }
+      ],
+      "remediation": "Fix the \"test\" script with a valid command.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/broken-scripts"
+    },
+    {
+      "id": "broken-scripts",
+      "title": "Broken or placeholder script definitions in package.json",
+      "description": "Suspicious script \"lint\": \"echo \"Linting not configured yet\"\"",
+      "severity": "error",
+      "category": "repository-readiness",
+      "evidence": [
+        {
+          "file": "package.json",
+          "snippet": "\"[REDACTED]\": \"[REDACTED]\"Linting not configured yet\"\""
+        }
+      ],
+      "remediation": "Fix the \"lint\" script with a valid command.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/broken-scripts"
+    },
+    {
+      "id": "broken-scripts",
+      "title": "Broken or placeholder script definitions in package.json",
+      "description": "Suspicious script \"build\": \"echo \"Build step placeholder\"\"",
+      "severity": "error",
+      "category": "repository-readiness",
+      "evidence": [
+        {
+          "file": "package.json",
+          "snippet": "\"[REDACTED]\": \"[REDACTED]\"Build step placeholder\"\""
+        }
+      ],
+      "remediation": "Fix the \"build\" script with a valid command.",
+      "scorePenalty": 3,
+      "docUrl": "https://repoproof.dev/docs/rules/broken-scripts"
+    }
+  ],
+  "summary": {
+    "totalFindings": 56,
+    "errors": 17,
+    "warnings": 34,
+    "info": 5,
+    "passedChecks": 4
+  }
+}

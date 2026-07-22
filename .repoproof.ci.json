@@ -2,6 +2,7 @@
   "minScore": 90,
   "failOn": "error",
   "excludedPaths": [
+    "assets/",
     "src/bad-fixture/",
     "src/good-fixture/",
     "src/tests/",
