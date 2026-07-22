@@ -17,7 +17,7 @@
 npx repoproof scan .
 ```
 
-## RepoProof in action
+## Verified on RepoProof itself
 
 RepoProof's CI-controlled self-audit scores **90/A with zero errors**:
 
@@ -25,13 +25,14 @@ RepoProof's CI-controlled self-audit scores **90/A with zero errors**:
   <img src="assets/screenshots/repoproof-self-audit.png" alt="RepoProof self-audit: score 90/100, Grade A, 0 errors, 2 warnings" width="85%">
 </p>
 
-The same tool flags **56 issues** in a deliberately broken test repository:
+RepoProof checks for:
 
-<p align="center">
-  <img src="assets/screenshots/repoproof-risky-demo.png" alt="RepoProof scanning an intentionally broken demo: score 6/100, Grade F" width="85%">
-</p>
-
-This is test data created to demonstrate RepoProof's detection capabilities — not a real project.
+- exposed secrets, private keys, and API tokens in source code
+- unfinished implementations and TODO/FIXME markers
+- disabled or empty tests
+- unsafe `eval()` and wildcard CORS configurations
+- empty catch blocks and missing HTTP timeouts
+- missing CI workflows, license, gitignore, and lockfiles
 
 ---
 
