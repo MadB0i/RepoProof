@@ -1,6 +1,6 @@
 {
   "name": "repoproof",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fast, deterministic, local-first CLI for auditing repository quality risks in AI-generated and rapidly generated software projects",
   "keywords": [
     "repository-quality",
