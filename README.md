@@ -13,31 +13,25 @@
   <img src="https://img.shields.io/badge/local--only-true-success" alt="100% local">
 </p>
 
----
+```bash
+npx repoproof scan .
+```
 
-## RepoProof audits itself
+## RepoProof in action
 
 RepoProof's CI-controlled self-audit scores **90/A with zero errors**:
 
 <p align="center">
-  <img src="assets/screenshots/self-scan-report.png" alt="RepoProof self-audit report showing score 90/100, Grade A, 0 errors" width="95%">
+  <img src="assets/screenshots/repoproof-self-audit.png" alt="RepoProof self-audit: score 90/100, Grade A, 0 errors, 2 warnings" width="85%">
 </p>
 
----
-
-## See it catch a deliberately broken repository
-
-Scanning a repository that is intentionally insecure and incomplete — 56 findings detected in under a second:
+The same tool flags **56 issues** in a deliberately broken test repository:
 
 <p align="center">
-  <img src="assets/screenshots/terminal-scan.png" alt="RepoProof terminal scan of risky-demo-repo showing 56 findings across all categories" width="90%">
+  <img src="assets/screenshots/repoproof-risky-demo.png" alt="RepoProof scanning an intentionally broken demo: score 6/100, Grade F" width="85%">
 </p>
 
-This repository is intentionally insecure and incomplete. Its low score demonstrates RepoProof's detection capabilities — not RepoProof's own quality.
-
-<p align="center">
-  <img src="assets/screenshots/risky-demo-report.png" alt="RepoProof HTML report of the intentionally risky demo repository" width="95%">
-</p>
+This is test data created to demonstrate RepoProof's detection capabilities — not a real project.
 
 ---
 
