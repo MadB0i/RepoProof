@@ -12,6 +12,9 @@ import { generateMarkdownReport } from "../reporters/markdown-reporter.js";
 import { generateHtmlReport } from "../reporters/html-reporter.js";
 import { generateSarifReport } from "../reporters/sarif-reporter.js";
 import { calculateGrade, ScanReport, Category } from "../types.js";
+import { fetchGitHubRepository } from "../github/index.js";
+import { generateGitHubSummary } from "../github/reporter.js";
+import { GitHubApiError } from "../github/client.js";
 
 import { readFileSync } from "node:fs";
 
@@ -287,6 +290,12 @@ function listRulesAction(_options: GlobalOptions) {
   console.log("");
 }
 
+async function githubAction(repository: string, options: GlobalOptions) {
+  const info = await fetchGitHubRepository(repository);
+  const output = generateGitHubSummary(info, { noColor: options.color === false });
+  console.log(output);
+}
+
 const program = new Command();
 
 program
@@ -355,6 +364,23 @@ program
     } catch (err) {
       console.error(`Error: ${(err as Error).message}`);
       process.exit(1);
+    }
+  });
+
+program
+  .command("github")
+  .description("Fetch repository metadata from the GitHub REST API")
+  .argument("<repository>", "GitHub repository as owner/repo or github.com URL")
+  .action(async (repository: string, options: GlobalOptions) => {
+    try {
+      await githubAction(repository, { ...program.optsWithGlobals(), ...options } as GlobalOptions);
+    } catch (err) {
+      if (err instanceof GitHubApiError) {
+        console.error(`Error: ${err.message}`);
+      } else {
+        console.error(`Error: ${(err as Error).message}`);
+      }
+      process.exitCode = 1;
     }
   });
 

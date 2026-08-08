@@ -55,7 +55,7 @@ Manually reviewing for these patterns is tedious and inconsistent. RepoProof mak
 - **CI-native** — single CLI command with `--min-score` and `--fail-on` gates
 - **Fast** — scans tens of thousands of files in under a second
 - **Node 20, 22, 24** — verified on every CI run
-- **245 tests** — full regression suite passes before every release
+- **291 tests** — full regression suite passes before every release
 
 ---
 
@@ -94,6 +94,12 @@ npx repoproof list-rules
 
 # Initialize a configuration file
 npx repoproof init
+
+# Fetch metadata for a public GitHub repository
+npx repoproof github MadB0i/RepoProof
+
+# The same, using a full GitHub URL
+npx repoproof github https://github.com/MadB0i/RepoProof
 ```
 
 ---
@@ -151,6 +157,28 @@ Create a `.repoproof.json` or `.repoproof.jsonc` file in your project root:
   "excludedPaths": ["dist", "generated"],
 }
 ```
+
+---
+
+## GitHub Integration
+
+Fetch public metadata about any GitHub repository — stars, forks, language breakdown, license, and more — directly from your terminal:
+
+```bash
+npx repoproof github owner/repo
+npx repoproof github https://github.com/owner/repo
+```
+
+The `github` command is the only RepoProof operation that touches the network. It makes two read-only calls to the [GitHub REST API](https://docs.github.com/rest) and prints a compact summary. It never clones the repository, and it never modifies anything.
+
+Private or rate-limited repositories can be queried by exporting a [personal access token](https://github.com/settings/tokens), which is optional but recommended to avoid GitHub's unauthenticated rate limits:
+
+```bash
+export GITHUB_TOKEN=github_pat_...
+npx repoproof github some-org/private-project
+```
+
+The token is only sent in the `Authorization` header of the API request and is never printed.
 
 ---
 
@@ -221,6 +249,12 @@ RepoProof detects and scans projects written in:
 ## Contributing
 
 Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
+
+## Support
+
+Questions, bug reports, and feature requests are welcome at [rupjyotitalukdar98@gmail.com](mailto:rupjyotitalukdar98@gmail.com).
 
 ---
 
