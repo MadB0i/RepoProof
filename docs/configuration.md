@@ -1,12 +1,14 @@
 # Configuration
 
-RepoProof supports configuration files to customize scanning behavior. Configuration is loaded from the project root and can be specified in three formats:
+RepoProof supports configuration files to customize scanning behavior. Configuration is loaded from the project root and can be specified in five formats:
 
 - `.repoproof.json`
 - `.repoproof.jsonc` (supports comments and trailing commas)
 - `repoproof.config.json`
+- `.repoproofrc.json`
+- `.repoproofrc` (extensionless dotfile; supports comments and trailing commas like `.jsonc`)
 
-Configuration files are discovered by walking up from the scanned directory to the filesystem root. The first match is used.
+Configuration files are discovered by walking up from the scanned directory to the filesystem root. The first match is used; when several names exist in the same directory, earlier names in the list above win (so existing projects keep their resolution order).
 
 ## Schema
 
@@ -71,6 +73,35 @@ Reference it in your configuration file:
 }
 ```
 
+## `.repoproofignore` File
+
+Similar to `.gitignore`, you can place a `.repoproofignore` file in the scanned directory root to exclude files from scans:
+
+```gitignore
+# comments and blank lines are ignored
+*.log
+generated/
+fixtures/sample-data.json
+```
+
+Supported syntax: `*` (any run of non-`/` chars), `?` (one char), `**` (any chars including `/`), trailing-slash directory patterns (`generated/`), and anchored paths (`fixtures/data.json`). Patterns without a `/` match at any depth. `!` negation is **not** supported — those lines are skipped.
+
+Ignore-file patterns **merge additively** with `ignoredPaths`/`excludedPaths` from config: both apply (union). Config cannot re-include something the ignore file excludes.
+
+## Score History (Trend Tracking)
+
+After every completed scan, RepoProof appends `{timestamp, score, grade, findingsCount}` to `.repoproof/history.json` in the scanned directory (only the last 50 runs are kept). The `.repoproof/` directory is never scanned itself.
+
+On the next run, the most recent recorded score automatically becomes the baseline, so the text report footer shows e.g. `Score change vs baseline (85.0): +5.0` without any flags. An explicit `--baseline-score <number>` always wins over history; with neither, no delta line is shown.
+
+Skip history entirely (read and write) for ephemeral CI runs with:
+
+```bash
+npx repoproof scan . --no-history
+```
+
+A missing, unreadable, or corrupt `history.json` is treated as "no history" — it never fails a scan.
+
 ## Init Command
 
 Create a starter configuration file with:
@@ -90,3 +121,9 @@ Command-line flags override configuration file values:
 | `--min-score <number>` | `minScore`                               |
 | `--fail-on <level>`    | `failOn`                                 |
 | `--config <path>`      | Path to config (bypasses auto-discovery) |
+
+Config source priority: explicit `--config <path>` wins > auto-discovered file > built-in defaults. A missing auto-discovered file silently falls back to defaults; an explicitly given or discovered file with malformed JSON fails fast with a clear `Invalid JSON/JSONC` error (a typo should be loud, not silent).
+
+## Web UI
+
+`repoproof serve [--port 4321]` starts a local dashboard at `http://127.0.0.1:<port>` (loopback only — never exposed to the network) and tries to open it in your browser. The dashboard scans local folders directly and shallow-clones public GitHub repos (`owner/name` or full URL) into the OS temp dir, deleting the clone right after the scan. Web scans use the same pipeline as `scan` (including score-history baselines). See the README's Web UI section for details.

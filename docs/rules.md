@@ -1,6 +1,6 @@
 # Rules
 
-RepoProof includes 31 rules across 5 categories, each designed to catch patterns commonly found in incomplete, AI-generated, or rapidly prototyped code.
+RepoProof includes 32 rules across 5 categories, each designed to catch patterns commonly found in incomplete, AI-generated, or rapidly prototyped code.
 
 ## Score Penalties
 
@@ -49,14 +49,15 @@ Rules that verify test suite quality and completeness.
 
 Rules that flag hardcoded secrets, unsafe patterns, and weak security configurations.
 
-| Rule ID             | Title                                   | Severity | Penalty        | Description                                                                                    |
-| ------------------- | --------------------------------------- | -------- | -------------- | ---------------------------------------------------------------------------------------------- |
-| `hardcoded-secrets` | Hardcoded secrets in source code        | error    | 10 per finding | Detects private keys, API keys, passwords, tokens, AWS keys, GitHub tokens, Stripe/OpenAI keys |
-| `env-tracked`       | .env file tracked in repository         | error    | 8 per finding  | Detects `.env` files (not `.env.example`) tracked in the repo                                  |
-| `unsafe-eval`       | Use of eval() or dynamic code execution | error    | 5 per finding  | Detects `eval()`, `new Function()`, `setTimeout`/`setInterval` with string arguments           |
-| `wildcard-cors`     | Wildcard CORS configuration             | error    | 5 per finding  | Detects `Access-Control-Allow-Origin: *` and equivalent configurations                         |
-| `debug-enabled`     | Debug mode enabled by default           | warning  | 4 per finding  | Detects `debug: true`, `NODE_ENV=development`, verbose logging in config files                 |
-| `missing-gitignore` | Missing .gitignore file                 | warning  | 5 per finding  | Detects projects without a `.gitignore` file                                                   |
+| Rule ID             | Title                                   | Severity | Penalty        | Description                                                                                        |
+| ------------------- | --------------------------------------- | -------- | -------------- | -------------------------------------------------------------------------------------------------- |
+| `hardcoded-secrets` | Hardcoded secrets in source code        | error    | 10 per finding | Detects private keys, API keys, passwords, tokens, AWS keys, GitHub tokens, Stripe/OpenAI keys     |
+| `env-tracked`       | .env file tracked in repository         | error    | 8 per finding  | Detects `.env` files (not `.env.example`) tracked in the repo                                      |
+| `unsafe-eval`       | Use of eval() or dynamic code execution | error    | 5 per finding  | Detects `eval()`, `new Function()`, `setTimeout`/`setInterval` with string arguments               |
+| `unsafe-exec`       | Use of child_process exec/spawn         | error    | 5 per finding  | Detects `exec()`, `execSync()`, `spawn()`, `spawnSync()` calls (regex-based; may flag static args) |
+| `wildcard-cors`     | Wildcard CORS configuration             | error    | 5 per finding  | Detects `Access-Control-Allow-Origin: *` and equivalent configurations                             |
+| `debug-enabled`     | Debug mode enabled by default           | warning  | 4 per finding  | Detects `debug: true`, `NODE_ENV=development`, verbose logging in config files                     |
+| `missing-gitignore` | Missing .gitignore file                 | warning  | 5 per finding  | Detects projects without a `.gitignore` file                                                       |
 
 **Why this matters:** Hardcoded secrets are the #1 security risk in AI-generated code. Automated code generation tools may include real-looking but fake credentials, or worse, actual credentials scraped from training data. Unsafe patterns like `eval()` and wildcard CORS create exploitable vulnerabilities.
 
