@@ -6,6 +6,12 @@ export interface TextReporterOptions {
   noColor?: boolean;
   quiet?: boolean;
   verbose?: boolean;
+  /**
+   * Score from a previous run to compare against. When provided, the footer
+   * shows the score delta (e.g. "+3.5" / "-2.0"). The CLI resolves this from
+   * `--baseline-score` first, then the last `.repoproof/history.json` entry.
+   */
+  baselineScore?: number;
 }
 
 const CATEGORY_LABELS: Record<Category, string> = {
@@ -15,6 +21,14 @@ const CATEGORY_LABELS: Record<Category, string> = {
   "error-handling-reliability": "Error Handling & Reliability",
   "repository-readiness": "Repository Readiness",
 };
+
+const CATEGORY_ORDER: Category[] = [
+  "incomplete-implementation",
+  "tests",
+  "security-configuration",
+  "error-handling-reliability",
+  "repository-readiness",
+];
 
 const SEVERITY_ICON: Record<string, string> = {
   error: "\u2716",
@@ -69,6 +83,23 @@ function formatEvidencePath(evidence: { file: string; line?: number; column?: nu
   return path;
 }
 
+function formatGradeHero(score: number, grade: string, noColor: boolean): string {
+  const display = `\u2605 ${score.toFixed(1)}/100  (Grade ${grade})`;
+  return formatBold(display, noColor);
+}
+
+/** First line of a remediation string, truncated for one-line display. */
+export function oneLineRemediation(remediation: string, maxLength = 100): string {
+  const firstLine = remediation.split("\n")[0].trim();
+  return firstLine.length > maxLength ? `${firstLine.slice(0, maxLength - 1)}\u2026` : firstLine;
+}
+
+export function formatScoreDelta(score: number, baselineScore: number): string {
+  const delta = score - baselineScore;
+  const sign = delta > 0 ? "+" : delta < 0 ? "\u2212" : "";
+  return `${sign}${Math.abs(delta).toFixed(1)}`;
+}
+
 function renderScoreBar(score: number, width: number, noColor: boolean): string {
   const filled = Math.round((score / 100) * width);
   const empty = width - filled;
@@ -96,7 +127,8 @@ export function generateTextReport(report: ScanReport, options?: TextReporterOpt
   lines.push("");
 
   if (!quiet) {
-    // Score and grade
+    // Score and grade — hero line first (large/bold with grade), then detail.
+    lines.push(`  ${formatGradeHero(report.score, report.grade, noColor)}`);
     lines.push(`  ${formatBold("Overall Score:", noColor)} ${formatScore(report.score, noColor)}`);
     lines.push(`  ${formatBold("Grade:", noColor)}        ${formatGrade(report.grade, noColor)}`);
     lines.push(`  ${renderScoreBar(report.score, 40, noColor)}`);
@@ -116,7 +148,7 @@ export function generateTextReport(report: ScanReport, options?: TextReporterOpt
     lines.push("");
   }
 
-  // Findings grouped by severity
+  // Findings grouped by severity, then by category (indented subgroups).
   const severityOrder = [
     ["error", errors],
     ["warning", warnings],
@@ -133,29 +165,44 @@ export function generateTextReport(report: ScanReport, options?: TextReporterOpt
     );
     lines.push("");
 
+    const byCategory = new Map<Category, typeof findings>();
     for (const finding of findings) {
-      const sevLabel = formatSeverity(finding.severity, noColor);
-      const firstEvidence = finding.evidence[0];
-      const location = firstEvidence ? formatEvidencePath(firstEvidence) : "(no location)";
-      lines.push(`    [${sevLabel}] ${finding.id} \u2014 ${finding.title}`);
-      lines.push(`            ${location}`);
+      const group = byCategory.get(finding.category) ?? [];
+      group.push(finding);
+      byCategory.set(finding.category, group);
+    }
+    const orderedCategories = CATEGORY_ORDER.filter((c) => byCategory.has(c));
+    for (const cat of orderedCategories) {
+      const groupFindings = byCategory.get(cat) ?? [];
+      const label = CATEGORY_LABELS[cat] ?? cat;
+      lines.push(`    ${formatBold(`\u25B8 ${label} (${groupFindings.length})`, noColor)}`);
+      lines.push("");
 
-      if (verbose) {
-        lines.push(`            ${finding.description}`);
-        lines.push(`            Remediation: ${finding.remediation}`);
-        if (finding.docUrl) {
-          lines.push(`            Docs: ${finding.docUrl}`);
-        }
-        if (finding.evidence.length > 0 && finding.evidence[0].snippet) {
-          const snippet = redactSnippet(finding.evidence[0].snippet);
-          const snippetLines = snippet.split("\n").filter((s) => s.trim().length > 0);
-          for (const sl of snippetLines.slice(0, 5)) {
-            lines.push(`            | ${sl.trim()}`);
+      for (const finding of groupFindings) {
+        const sevLabel = formatSeverity(finding.severity, noColor);
+        const firstEvidence = finding.evidence[0];
+        const location = firstEvidence ? formatEvidencePath(firstEvidence) : "(no location)";
+        lines.push(`      [${sevLabel}] ${finding.id} \u2014 ${finding.title}`);
+        lines.push(`              \u21B3 ${location}`);
+        lines.push(`              \u21B3 Fix: ${oneLineRemediation(finding.remediation)}`);
+
+        if (verbose) {
+          lines.push(`              ${finding.description}`);
+          lines.push(`              Remediation: ${finding.remediation}`);
+          if (finding.docUrl) {
+            lines.push(`              Docs: ${finding.docUrl}`);
           }
+          if (finding.evidence.length > 0 && finding.evidence[0].snippet) {
+            const snippet = redactSnippet(finding.evidence[0].snippet);
+            const snippetLines = snippet.split("\n").filter((s) => s.trim().length > 0);
+            for (const sl of snippetLines.slice(0, 5)) {
+              lines.push(`              | ${sl.trim()}`);
+            }
+          }
+          lines.push("");
+        } else {
+          lines.push("");
         }
-        lines.push("");
-      } else {
-        lines.push("");
       }
     }
   }
@@ -201,6 +248,11 @@ export function generateTextReport(report: ScanReport, options?: TextReporterOpt
       lines.push("    Your repository is in good shape!");
     }
 
+    const baselineScore = options?.baselineScore;
+    if (baselineScore !== undefined && Number.isFinite(baselineScore)) {
+      const delta = formatScoreDelta(report.score, baselineScore);
+      lines.push(`    Score change vs baseline (${baselineScore.toFixed(1)}): ${delta}`);
+    }
     lines.push(`    Report generated: ${report.timestamp}`);
     lines.push(`    RepoProof v${report.version}`);
     lines.push("");

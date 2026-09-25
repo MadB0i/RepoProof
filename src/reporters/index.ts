@@ -1,4 +1,9 @@
-export { generateTextReport, type TextReporterOptions } from "./text-reporter.js";
+export {
+  generateTextReport,
+  oneLineRemediation,
+  formatScoreDelta,
+  type TextReporterOptions,
+} from "./text-reporter.js";
 export { generateJsonReport } from "./json-reporter.js";
 export { generateMarkdownReport } from "./markdown-reporter.js";
 export { generateHtmlReport } from "./html-reporter.js";

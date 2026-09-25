@@ -2,7 +2,16 @@ import { readFileSync, existsSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { RepoProofConfig, Severity } from "../types.js";
 
-const CONFIG_FILENAMES = [".repoproof.json", ".repoproof.jsonc", "repoproof.config.json"];
+// Discovery precedence (first match wins per directory, walking up to root).
+// The `.repoproofrc*` names are appended last so existing projects keep
+// their current resolution order.
+const CONFIG_FILENAMES = [
+  ".repoproof.json",
+  ".repoproof.jsonc",
+  "repoproof.config.json",
+  ".repoproofrc.json",
+  ".repoproofrc",
+];
 
 const DEFAULT_CONFIG: RepoProofConfig = {
   minScore: 70,
@@ -38,6 +47,21 @@ export function findConfig(startDir: string): string | null {
     depth++;
   }
   return null;
+}
+
+/**
+ * Config source priority (mirrors the CLI scan flow):
+ * explicit `--config <path>` wins > auto-discovered file > null (defaults).
+ * Returns the path to load, or null when no config file applies.
+ */
+export function resolveConfigPath(
+  explicitPath: string | undefined,
+  scanRoot: string,
+): string | null {
+  if (explicitPath !== undefined && explicitPath !== "") {
+    return explicitPath;
+  }
+  return findConfig(scanRoot);
 }
 
 export function validateConfig(config: unknown): RepoProofConfig {
@@ -203,7 +227,11 @@ export function loadConfig(configPath?: string): RepoProofConfig {
     );
   }
 
-  const isJsonc = configPath.toLowerCase().endsWith(".jsonc");
+  // Extensionless `.repoproofrc` follows dotfile convention (like
+  // .eslintrc/.babelrc) and allows comments + trailing commas as JSONC.
+  const baseName = resolvedPath.replace(/\\/g, "/").split("/").pop() ?? "";
+  const isJsonc =
+    configPath.toLowerCase().endsWith(".jsonc") || baseName.toLowerCase() === ".repoproofrc";
   if (isJsonc) {
     raw = stripJsoncComments(raw);
   }

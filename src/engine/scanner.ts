@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
+import { loadIgnoreFile, isIgnoredByPatterns } from "../config/ignore-file.js";
 import { ScannedFile, ScanContext, RepoProofConfig, ProjectType } from "../types.js";
 
 const DEFAULT_MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
@@ -27,6 +28,10 @@ const IGNORED_DIRS = new Set([
   "vendor",
   ".pnp",
   ".yarn",
+  // RepoProof's own data dir (scan history, caches). Never scan our own
+  // output — otherwise history.json from feature runs would feed back
+  // into future scans.
+  ".repoproof",
 ]);
 
 const IGNORED_FILES = new Set([
@@ -174,6 +179,9 @@ export function scanDirectory(
   const results: ScannedFile[] = [];
   const absDir = resolve(dirPath);
   const configIgnored = new Set((config.ignoredPaths ?? []).map((p) => p.replace(/\\/g, "/")));
+  // Ignore-file patterns merge ADDITIVELY with config: both apply (union).
+  // Config can never "un-ignore" something the ignore file excludes.
+  const ignoreFilePatterns = loadIgnoreFile(absDir);
   const maxDepth = config.maxDirectoryDepth ?? DEFAULT_MAX_DIR_DEPTH;
   const maxFiles = config.maxFiles ?? DEFAULT_MAX_FILES;
   const maxTotalBytes = config.maxTotalBytes ?? DEFAULT_MAX_TOTAL_BYTES;
@@ -235,6 +243,8 @@ export function scanDirectory(
       if (IGNORED_FILES.has(entry)) continue;
       if (configIgnored.has(relPath)) continue;
       if (configIgnored.has(entry)) continue;
+      if (ignoreFilePatterns.length > 0 && isIgnoredByPatterns(ignoreFilePatterns, relPath))
+        continue;
       if (config.excludedPaths?.some((p) => relPath.startsWith(p))) continue;
       if (config.includedPaths?.length && !config.includedPaths.some((p) => relPath.startsWith(p)))
         continue;

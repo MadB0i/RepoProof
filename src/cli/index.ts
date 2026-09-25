@@ -2,21 +2,20 @@
 import { Command } from "commander";
 import { existsSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { scanDirectory, createScanContext } from "../engine/scanner.js";
-import { runRules, calculateScore, getResultsBySeverity } from "../engine/rule-runner.js";
-import { loadConfig, findConfig } from "../config/config-loader.js";
+import { getResultsBySeverity } from "../engine/rule-runner.js";
+import { performScan, getPackageVersion } from "../engine/scan.js";
 import { rules } from "../rules/index.js";
 import { generateTextReport } from "../reporters/text-reporter.js";
 import { generateJsonReport } from "../reporters/json-reporter.js";
 import { generateMarkdownReport } from "../reporters/markdown-reporter.js";
 import { generateHtmlReport } from "../reporters/html-reporter.js";
 import { generateSarifReport } from "../reporters/sarif-reporter.js";
-import { calculateGrade, ScanReport, Category } from "../types.js";
+import { Category } from "../types.js";
+import { readHistory, appendHistory, resolveBaseline } from "../history/history.js";
+import { startServer, openBrowser, DEFAULT_PORT } from "../web/server.js";
 import { fetchGitHubRepository } from "../github/index.js";
 import { generateGitHubSummary } from "../github/reporter.js";
 import { GitHubApiError } from "../github/client.js";
-
-import { readFileSync } from "node:fs";
 
 const CATEGORY_LABELS: Record<Category, string> = {
   "incomplete-implementation": "Incomplete Implementation",
@@ -44,76 +43,35 @@ interface GlobalOptions {
   noColor?: boolean;
   quiet?: boolean;
   verbose?: boolean;
+  baselineScore?: string;
+  progress?: boolean;
+  // Set by `--no-history` (commander negation: `--no-x` yields `x === false`).
+  history?: boolean;
 }
 
-function getPackageVersion(): string {
-  try {
-    const pkg = JSON.parse(
-      readFileSync(new URL("../../package.json", import.meta.url), "utf-8"),
-    ) as { version: string };
-    return pkg.version;
-  } catch {
-    return "1.0.0";
-  }
-}
+import { shouldShowProgress, formatProgressMessage } from "./progress.js";
+
+export { shouldShowProgress, formatProgressMessage };
 
 async function scanAction(scanPath: string | undefined, options: GlobalOptions) {
-  const targetPath = scanPath || ".";
-  const resolvedPath = resolve(targetPath);
+  // Shared scan pipeline (also used by `repoproof serve`). Throws on tool
+  // errors; the scan command wrapper below turns those into exit code 1.
+  const { report, config, resolvedPath, fileCount, ruleCount } = await performScan({
+    targetPath: scanPath,
+    configPath: options.config,
+  });
 
-  if (!existsSync(resolvedPath)) {
-    console.error(`Error: Path not found: ${targetPath}`);
-    process.exit(1);
+  if (shouldShowProgress(options, process.stderr.isTTY ?? false)) {
+    console.error(formatProgressMessage(fileCount, ruleCount));
   }
 
-  let config;
-  if (options.config) {
-    config = loadConfig(options.config);
-  } else {
-    const found = findConfig(resolvedPath);
-    config = found ? loadConfig(found) : loadConfig();
-  }
-
-  const files = scanDirectory(resolvedPath, config);
-
-  const context = createScanContext(files, config, resolvedPath);
-
-  const findings = await runRules(rules, context);
-
-  const { score, categoryScores } = calculateScore(findings);
-  const grade = calculateGrade(score);
+  const { score, findings } = report;
 
   const minScore =
     options.minScore !== undefined ? Number(options.minScore) : (config.minScore ?? 0);
   const failOn = options.failOn ?? config.failOn ?? "error";
 
-  const { errors, warnings, info } = getResultsBySeverity(findings);
-
-  const enabledRules = rules.filter((r) => !(config.disabledRules ?? []).includes(r.id));
-  const passingRuleIds = new Set(enabledRules.map((r) => r.id));
-  for (const f of findings) {
-    passingRuleIds.delete(f.id);
-  }
-  const passedChecks = passingRuleIds.size;
-
-  const report: ScanReport = {
-    version: getPackageVersion(),
-    timestamp: new Date().toISOString(),
-    score,
-    grade,
-    maxScore: 100,
-    projectType: context.projectType,
-    categoryScores,
-    findings,
-    config,
-    summary: {
-      totalFindings: findings.length,
-      errors: errors.length,
-      warnings: warnings.length,
-      info: info.length,
-      passedChecks,
-    },
-  };
+  const { errors, warnings } = getResultsBySeverity(findings);
 
   const format = options.format ?? "text";
   const validFormats: ReportFormat[] = ["text", "json", "markdown", "html", "sarif"];
@@ -131,7 +89,7 @@ async function scanAction(scanPath: string | undefined, options: GlobalOptions) 
       output = generateMarkdownReport(report);
       break;
     case "html":
-      output = generateHtmlReport(report);
+      output = generateHtmlReport(report, { targetLabel: resolvedPath, targetKind: "local" });
       break;
     case "sarif":
       output = generateSarifReport(report);
@@ -141,6 +99,12 @@ async function scanAction(scanPath: string | undefined, options: GlobalOptions) 
         noColor: options.color === false,
         quiet: options.quiet,
         verbose: options.verbose,
+        // Priority: explicit --baseline-score flag wins (unchanged behavior),
+        // otherwise the last recorded run auto-baselines, otherwise no delta.
+        baselineScore: resolveBaseline(
+          options.baselineScore,
+          options.history === false ? [] : readHistory(resolvedPath),
+        ),
       });
       break;
   }
@@ -160,6 +124,18 @@ async function scanAction(scanPath: string | undefined, options: GlobalOptions) 
     }
   } else {
     console.log(output);
+  }
+
+  // Record this completed scan for future auto-baselines. Runs that fail
+  // as findings-above-threshold still count (the scan completed); tool
+  // errors exit earlier and record nothing. Never fails the scan.
+  if (options.history !== false) {
+    appendHistory(resolvedPath, {
+      timestamp: report.timestamp,
+      score: report.score,
+      grade: report.grade,
+      findingsCount: findings.length,
+    });
   }
 
   const hasErrors = errors.length > 0;
@@ -310,6 +286,9 @@ program
   .option("--no-color", "Disable colored output")
   .option("--quiet", "Minimal output")
   .option("--verbose", "Detailed output")
+  .option("--baseline-score <number>", "Baseline score to compare against (shows delta)")
+  .option("--progress", "Show scan progress on stderr")
+  .option("--no-history", "Skip reading/writing scan history in .repoproof/")
   .hook("preAction", (thisCommand) => {
     const opts = thisCommand.optsWithGlobals() as GlobalOptions;
     if (opts.color === false) {
@@ -382,6 +361,30 @@ program
       }
       process.exitCode = 1;
     }
+  });
+
+async function serveAction(options: { port?: string }) {
+  const port = options.port !== undefined ? Number(options.port) : DEFAULT_PORT;
+  try {
+    const { url } = await startServer(port);
+    console.log(`RepoProof dashboard: ${url}`);
+    console.log("Serving on 127.0.0.1 only. Press Ctrl+C to stop.");
+    const opened = await openBrowser(url);
+    if (!opened) {
+      console.log("Could not open a browser automatically — open the URL above manually.");
+    }
+  } catch (err) {
+    console.error(`Error: ${(err as Error).message}`);
+    process.exit(1);
+  }
+}
+
+program
+  .command("serve")
+  .description("Start the local web dashboard (binds to 127.0.0.1 only)")
+  .option("--port <number>", "Port to listen on", String(DEFAULT_PORT))
+  .action(async (options: { port?: string }) => {
+    await serveAction(options);
   });
 
 program.parse(process.argv);

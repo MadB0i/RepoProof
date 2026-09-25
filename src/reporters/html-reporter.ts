@@ -33,8 +33,24 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;");
 }
 
-export function generateHtmlReport(report: ScanReport): string {
+export interface HtmlReportOptions {
+  targetLabel?: string;
+  targetKind?: "local" | "github";
+}
+
+function getDisplayTargetLabel(targetLabel: string, targetKind?: "local" | "github"): string {
+  if (targetKind !== "local") return targetLabel;
+  const normalized = targetLabel.replace(/[\\/]+$/, "");
+  const lastSegment = normalized.split(/[\\/]/).filter(Boolean).pop();
+  return lastSegment || targetLabel;
+}
+
+export function generateHtmlReport(report: ScanReport, options?: HtmlReportOptions): string {
   const { errors, warnings, info } = getResultsBySeverity(report.findings);
+  const targetLabel = options?.targetLabel?.trim() || "Local repository";
+  const displayTargetLabel = getDisplayTargetLabel(targetLabel, options?.targetKind);
+  const safeTargetLabel = escapeHtml(displayTargetLabel);
+  const reportTitle = `${targetLabel} — RepoProof Audit`;
 
   const categories = CATEGORY_ORDER.map((cat) => {
     const cs = report.categoryScores[cat];
@@ -50,50 +66,57 @@ export function generateHtmlReport(report: ScanReport): string {
   const scoreCircumf = 2 * Math.PI * 54;
 
   return `<!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RepoProof - Quality Audit Report</title>
+<title>${escapeHtml(reportTitle)}</title>
 <style>
   :root {
-    --color-bg: #ffffff;
-    --color-surface: #f8f9fa;
-    --color-border: #dee2e6;
-    --color-text: #212529;
-    --color-text-secondary: #6c757d;
-    --color-pass: #2d8a4e;
-    --color-pass-bg: #e8f5e9;
-    --color-warn: #b8860b;
-    --color-warn-bg: #fff8e1;
-    --color-fail: #c62828;
-    --color-fail-bg: #ffebee;
-    --color-info: #1565c0;
-    --color-info-bg: #e3f2fd;
-    --color-card-shadow: rgba(0,0,0,0.08);
-    --color-table-stripe: #f8f9fa;
-    --color-table-hover: #e9ecef;
-    --radius: 8px;
-    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --color-bg: #14161C;
+    --color-surface: #1B1E27;
+    --color-surface-strong: #20232D;
+    --color-border: #2A2E3A;
+    --color-text: #E8EAF0;
+    --color-text-secondary: #8B90A3;
+    --color-accent: #00D9C0;
+    --color-accent-dim: #087F77;
+    --color-pass: #63D6A5;
+    --color-pass-bg: #17352D;
+    --color-warn: #F5B942;
+    --color-warn-bg: #3A3010;
+    --color-fail: #FF5D5D;
+    --color-fail-bg: #3A1A22;
+    --color-info: #64B5F6;
+    --color-info-bg: #122D40;
+    --color-card-shadow: none;
+    --color-table-stripe: #181B23;
+    --color-table-hover: #232733;
+    --radius: 3px;
+    --font-family: "IBM Plex Sans", "Trebuchet MS", sans-serif;
+    --font-display: "Space Grotesk", "Trebuchet MS", sans-serif;
+    --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
   }
 
-  [data-theme="dark"] {
-    --color-bg: #1a1a2e;
-    --color-surface: #16213e;
-    --color-border: #2a2a4a;
-    --color-text: #e0e0e0;
-    --color-text-secondary: #a0a0b0;
-    --color-pass: #4caf50;
-    --color-pass-bg: #1b3a2b;
-    --color-warn: #ffc107;
-    --color-warn-bg: #3a3010;
-    --color-fail: #ef5350;
-    --color-fail-bg: #3a1a1a;
-    --color-info: #64b5f6;
-    --color-info-bg: #0d2538;
-    --color-card-shadow: rgba(0,0,0,0.3);
-    --color-table-stripe: #1a1a32;
-    --color-table-hover: #222244;
+  [data-theme="light"] {
+    --color-bg: #F4F6F8;
+    --color-surface: #FFFFFF;
+    --color-surface-strong: #EEF1F4;
+    --color-border: #D6DCE3;
+    --color-text: #171B22;
+    --color-text-secondary: #5C6675;
+    --color-accent: #007F78;
+    --color-accent-dim: #B5E8E2;
+    --color-pass: #17845E;
+    --color-pass-bg: #DDF4E9;
+    --color-warn: #9A6800;
+    --color-warn-bg: #FFF0C7;
+    --color-fail: #C53D4B;
+    --color-fail-bg: #FFE1E5;
+    --color-info: #216DB0;
+    --color-info-bg: #DCEEFF;
+    --color-table-stripe: #F8FAFB;
+    --color-table-hover: #E8EEF2;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -102,79 +125,113 @@ export function generateHtmlReport(report: ScanReport): string {
     font-family: var(--font-family);
     background: var(--color-bg);
     color: var(--color-text);
-    line-height: 1.6;
+    line-height: 1.5;
     padding: 0;
     -webkit-font-smoothing: antialiased;
   }
 
-  .container { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+  .container { max-width: 1440px; margin: 0; padding: 28px 32px 40px; }
 
   header {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 24px 0;
-    border-bottom: 2px solid var(--color-border);
-    margin-bottom: 32px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 0 0 18px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 24px;
+  }
+
+  .wordmark {
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
   }
 
   header h1 {
-    font-size: 1.5rem;
+    font-family: var(--font-display);
+    font-size: 2rem;
     font-weight: 700;
+    letter-spacing: -0.03em;
     color: var(--color-text);
+    margin: 0 0 5px;
   }
+
+  .target-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+  }
+
+  .target-meta strong { color: var(--color-accent); font-weight: 600; }
+
+  .header-slash { color: var(--color-accent); }
 
   .header-controls {
     display: flex;
     align-items: center;
     gap: 12px;
+    margin-left: auto;
   }
 
   .theme-toggle {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    color: var(--color-text);
-    padding: 8px 16px;
+    color: var(--color-accent);
+    padding: 7px 12px;
     border-radius: var(--radius);
     cursor: pointer;
-    font-size: 0.875rem;
-    transition: background 0.2s, border-color 0.2s;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    transition: border-color 0.15s, color 0.15s;
   }
 
-  .theme-toggle:hover {
-    background: var(--color-table-hover);
-  }
+  .theme-toggle:hover { border-color: var(--color-accent); }
 
   /* Score overview */
   .score-overview {
     display: flex;
     flex-wrap: wrap;
-    gap: 32px;
+    gap: 28px;
     align-items: center;
-    justify-content: center;
-    padding: 32px 0;
-    margin-bottom: 32px;
+    justify-content: flex-start;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent);
   }
 
   .score-ring {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 112px;
+    height: 112px;
+    flex: 0 0 auto;
   }
 
   .score-ring svg { transform: rotate(-90deg); }
 
-  .score-ring .bg { fill: none; stroke: var(--color-border); stroke-width: 8; }
+  .score-ring .bg { fill: none; stroke: var(--color-border); stroke-width: 6; }
   .score-ring .fg {
     fill: none;
     stroke: ${scoreColor};
-    stroke-width: 8;
+    stroke-width: 6;
     stroke-linecap: round;
-    stroke-dasharray: ${scoreCircumf};
-    stroke-dashoffset: ${scoreCircumf - (report.score / 100) * scoreCircumf};
-    transition: stroke-dashoffset 1s ease;
+    stroke-dasharray: var(--gauge-circumference);
+    stroke-dashoffset: var(--score-offset);
+    animation: gaugeSweep 0.8s ease-out both;
+  }
+
+  @keyframes gaugeSweep {
+    from { stroke-dashoffset: var(--gauge-circumference); }
+    to { stroke-dashoffset: var(--score-offset); }
   }
 
   .score-ring .center {
@@ -186,8 +243,9 @@ export function generateHtmlReport(report: ScanReport): string {
   }
 
   .score-ring .score-value {
-    font-size: 2rem;
-    font-weight: 800;
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 700;
     line-height: 1;
     color: var(--color-text);
   }
@@ -198,14 +256,17 @@ export function generateHtmlReport(report: ScanReport): string {
   }
 
   .score-grade {
-    font-size: 4rem;
-    font-weight: 800;
+    font-family: var(--font-mono);
+    font-size: 3rem;
+    font-weight: 700;
     line-height: 1;
     color: ${scoreColor};
   }
 
   .score-meta {
-    text-align: center;
+    font-family: var(--font-mono);
+    text-align: left;
+    min-width: 150px;
   }
 
   .score-meta .total-findings {
@@ -216,30 +277,33 @@ export function generateHtmlReport(report: ScanReport): string {
   /* Summary cards */
   .summary-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-    margin-bottom: 32px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid var(--color-border);
+    margin-bottom: 24px;
   }
 
   .summary-card {
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 16px;
-    text-align: center;
+    border-right: 1px solid var(--color-border);
+    padding: 12px 16px;
+    text-align: left;
   }
 
+  .summary-card:last-child { border-right: 0; }
+
   .summary-card .count {
-    font-size: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
     font-weight: 700;
     line-height: 1.2;
   }
 
   .summary-card .label {
-    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
     color: var(--color-text-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
   }
 
   .summary-card.error .count { color: var(--color-fail); }
@@ -250,43 +314,40 @@ export function generateHtmlReport(report: ScanReport): string {
   /* Category cards */
   .category-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    margin-bottom: 32px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--color-border);
+    border: 1px solid var(--color-border);
+    margin-bottom: 24px;
   }
 
   .category-card {
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 20px;
-    transition: box-shadow 0.2s, transform 0.2s;
-  }
-
-  .category-card:hover {
-    box-shadow: 0 4px 12px var(--color-card-shadow);
-    transform: translateY(-1px);
+    border: 0;
+    border-radius: 0;
+    padding: 14px;
   }
 
   .category-card h3 {
-    font-size: 0.875rem;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
     font-weight: 600;
     margin-bottom: 12px;
     color: var(--color-text);
   }
 
   .category-card .progress-bar {
-    height: 8px;
+    height: 5px;
     background: var(--color-border);
-    border-radius: 4px;
+    border-radius: 0;
     overflow: hidden;
     margin-bottom: 8px;
   }
 
   .category-card .progress-fill {
     height: 100%;
-    border-radius: 4px;
-    transition: width 0.6s ease;
+    border-radius: 0;
+    transition: width 0.3s ease;
   }
 
   .category-card .progress-fill.pass { background: var(--color-pass); }
@@ -301,6 +362,7 @@ export function generateHtmlReport(report: ScanReport): string {
   }
 
   .category-card .cat-score {
+    font-family: var(--font-mono);
     font-weight: 700;
     color: var(--color-text);
   }
@@ -309,12 +371,13 @@ export function generateHtmlReport(report: ScanReport): string {
   .filters {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    margin-bottom: 16px;
+    border-left: 3px solid var(--color-accent);
+    border-radius: 0;
+    padding: 12px 14px;
+    margin-bottom: 14px;
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 14px;
     align-items: center;
   }
 
@@ -330,21 +393,22 @@ export function generateHtmlReport(report: ScanReport): string {
   .filters input[type="search"] {
     flex: 1;
     min-width: 180px;
-    padding: 6px 12px;
+    padding: 6px 10px;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: 0;
     background: var(--color-bg);
     color: var(--color-text);
-    font-size: 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
   }
 
   .filters select {
-    padding: 6px 12px;
+    padding: 6px 10px;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: 0;
     background: var(--color-bg);
     color: var(--color-text);
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
 
   .severity-filters {
@@ -365,13 +429,15 @@ export function generateHtmlReport(report: ScanReport): string {
 
   /* Findings table */
   .findings-section h2 {
-    font-size: 1.125rem;
-    font-weight: 700;
-    margin-bottom: 12px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
   }
 
   .findings-count {
-    font-size: 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
     color: var(--color-text-secondary);
     font-weight: 400;
   }
@@ -379,7 +445,7 @@ export function generateHtmlReport(report: ScanReport): string {
   .findings-table-wrapper {
     overflow-x: auto;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: 0;
   }
 
   table.findings {
@@ -390,13 +456,14 @@ export function generateHtmlReport(report: ScanReport): string {
 
   table.findings th {
     text-align: left;
-    padding: 10px 12px;
+    padding: 9px 10px;
     background: var(--color-surface);
-    border-bottom: 2px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font-mono);
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     color: var(--color-text-secondary);
     white-space: nowrap;
     cursor: pointer;
@@ -407,7 +474,7 @@ export function generateHtmlReport(report: ScanReport): string {
   table.findings th.sorted-desc::after { content: " \\25BC"; font-size: 0.625rem; }
 
   table.findings td {
-    padding: 10px 12px;
+    padding: 9px 10px;
     border-bottom: 1px solid var(--color-border);
     vertical-align: top;
   }
@@ -417,12 +484,13 @@ export function generateHtmlReport(report: ScanReport): string {
 
   .severity-badge {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.6875rem;
+    padding: 3px 7px;
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
   }
 
   .severity-badge.error { background: var(--color-fail-bg); color: var(--color-fail); }
@@ -430,8 +498,9 @@ export function generateHtmlReport(report: ScanReport): string {
   .severity-badge.info { background: var(--color-info-bg); color: var(--color-info); }
 
   .finding-id {
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    font-size: 0.8125rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-accent);
   }
 
   .finding-title {
@@ -439,8 +508,8 @@ export function generateHtmlReport(report: ScanReport): string {
   }
 
   .finding-location {
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
     color: var(--color-text-secondary);
     word-break: break-all;
   }
@@ -463,7 +532,7 @@ export function generateHtmlReport(report: ScanReport): string {
     background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: 4px;
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     white-space: pre-wrap;
     overflow-x: auto;
@@ -559,10 +628,16 @@ export function generateHtmlReport(report: ScanReport): string {
 <body>
 <div class="container">
   <header role="banner">
-    <h1>RepoProof &mdash; Repository Quality Audit</h1>
+    <div>
+      <div class="wordmark">RepoProof</div>
+      <h1>${safeTargetLabel}</h1>
+      <div class="target-meta">
+        <span><strong>SCAN</strong> ${escapeHtml(report.timestamp)}</span>
+      </div>
+    </div>
     <div class="header-controls">
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
-        <span id="themeIcon">&#9790;</span> <span id="themeLabel">Dark</span>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color mode" aria-pressed="true">
+        <span id="themeIcon">☀</span> <span id="themeLabel">Light</span>
       </button>
     </div>
   </header>
@@ -579,7 +654,7 @@ export function generateHtmlReport(report: ScanReport): string {
       : `
   <section aria-label="Score overview">
     <div class="score-overview">
-      <div class="score-ring" role="img" aria-label="Score: ${report.score.toFixed(1)} out of 100">
+      <div class="score-ring" role="img" aria-label="Score: ${report.score.toFixed(1)} out of 100" style="--gauge-circumference:${scoreCircumf};--score-offset:${scoreCircumf - (report.score / 100) * scoreCircumf}">
         <svg width="120" height="120" viewBox="0 0 120 120">
           <circle class="bg" cx="60" cy="60" r="54"/>
           <circle class="fg" cx="60" cy="60" r="54"/>
@@ -733,7 +808,18 @@ export function generateHtmlReport(report: ScanReport): string {
 
 <script>
 (function() {
-  var theme = localStorage.getItem("repoproof-theme") || "light";
+  var storage = null;
+  try { storage = window.localStorage; } catch (error) { storage = null; }
+  function readTheme() {
+    try {
+      var stored = storage && storage.getItem("repoproof-theme");
+      return stored === "light" || stored === "dark" ? stored : "dark";
+    } catch (error) { return "dark"; }
+  }
+  function saveTheme(theme) {
+    try { if (storage) storage.setItem("repoproof-theme", theme); } catch (error) { void error; }
+  }
+  var theme = readTheme();
   document.documentElement.setAttribute("data-theme", theme);
   updateThemeUI(theme);
 
@@ -743,7 +829,7 @@ export function generateHtmlReport(report: ScanReport): string {
       var current = document.documentElement.getAttribute("data-theme");
       var next = current === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("repoproof-theme", next);
+      saveTheme(next);
       updateThemeUI(next);
     });
   }
@@ -751,12 +837,13 @@ export function generateHtmlReport(report: ScanReport): string {
   function updateThemeUI(t) {
     var icon = document.getElementById("themeIcon");
     var label = document.getElementById("themeLabel");
+    if (themeToggle) themeToggle.setAttribute("aria-pressed", String(t === "dark"));
     if (!icon || !label) return;
     if (t === "dark") {
-      icon.innerHTML = "\\2600";
+      icon.textContent = "☀";
       label.textContent = "Light";
     } else {
-      icon.innerHTML = "\\263E";
+      icon.textContent = "◐";
       label.textContent = "Dark";
     }
   }
@@ -880,7 +967,7 @@ export function generateHtmlReport(report: ScanReport): string {
   }
 
   // Initial sort by severity desc
-  var defaultTh = document.querySelector("th[data-sort=\"severity\"]");
+  var defaultTh = document.querySelector('th[data-sort="severity"]');
   if (defaultTh) {
     sortCol = "severity";
     sortDir = "desc";

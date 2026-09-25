@@ -14,6 +14,7 @@ import { rule as coverageExcludes } from "./coverage-excludes.js";
 import { rule as hardcodedSecrets } from "./hardcoded-secrets.js";
 import { rule as envTracked } from "./env-tracked.js";
 import { rule as unsafeEval } from "./unsafe-eval.js";
+import { rule as unsafeExec } from "./unsafe-exec.js";
 import { rule as wildcardCors } from "./wildcard-cors.js";
 import { rule as debugEnabled } from "./debug-enabled.js";
 import { rule as missingGitignore } from "./missing-gitignore.js";
@@ -47,6 +48,7 @@ export const rules: Rule[] = [
   hardcodedSecrets,
   envTracked,
   unsafeEval,
+  unsafeExec,
   wildcardCors,
   debugEnabled,
   missingGitignore,
