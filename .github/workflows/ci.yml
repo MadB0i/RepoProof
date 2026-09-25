@@ -53,7 +53,7 @@ jobs:
       - name: Scan Self
         run: |
           node dist/cli.js scan . \
-            --config .repoproof.ci.json \
+            --config .repoproof.ci.jsonc \
             --format html \
             --output repoproof-self-scan.html \
             --min-score 90 \

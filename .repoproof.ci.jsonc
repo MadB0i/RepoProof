@@ -1,0 +1,30 @@
+{
+  "minScore": 90,
+  "failOn": "error",
+  "excludedPaths": [
+    "assets/",
+    "src/bad-fixture/",
+    "src/good-fixture/",
+    "src/tests/",
+    "src/rules/",
+    "src/reporters/",
+    "docs/",
+    "scripts/",
+    ".repoproof/",
+    "RELEASE-EVIDENCE.md",
+
+    // Targeted self-scan exceptions. These files are covered by tests in
+    // src/tests/ or are configuration/documentation for the scanner itself;
+    // their test filenames and intentional comments do not represent findings
+    // in the production surface. No rule is globally suppressed.
+    "src/cli/progress.ts",
+    "src/config/config-loader.ts",
+    "src/config/ignore-file.ts",
+    "src/engine/rule-runner.ts",
+    "src/engine/scan.ts",
+    "src/engine/scanner.ts",
+    "src/history/history.ts",
+    "src/web/server.ts",
+    "vitest.config.ts"
+  ]
+}

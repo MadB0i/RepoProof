@@ -27,7 +27,7 @@ describe("performScan", () => {
   it("should respect an explicit config path", async () => {
     const { config } = await performScan({
       targetPath: resolve("src/good-fixture"),
-      configPath: resolve(".repoproof.ci.json"),
+      configPath: resolve(".repoproof.ci.jsonc"),
     });
 
     expect(config.minScore).toBe(90);
