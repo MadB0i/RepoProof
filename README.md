@@ -101,13 +101,13 @@ It is a focused risk scanner, not a replacement for compiler diagnostics, a full
 
 ## Reports
 
-| Format | Command | Typical use |
-| --- | --- | --- |
-| Text | `--format text` | Terminal and CI logs |
-| JSON | `--format json` | Programmatic consumption |
+| Format   | Command             | Typical use              |
+| -------- | ------------------- | ------------------------ |
+| Text     | `--format text`     | Terminal and CI logs     |
+| JSON     | `--format json`     | Programmatic consumption |
 | Markdown | `--format markdown` | Pull requests and issues |
-| HTML | `--format html` | Local review and sharing |
-| SARIF | `--format sarif` | GitHub code scanning |
+| HTML     | `--format html`     | Local review and sharing |
+| SARIF    | `--format sarif`    | GitHub code scanning     |
 
 For a GitHub Actions SARIF workflow, see [report formats](docs/report-formats.md).
 
@@ -121,11 +121,11 @@ Start with a small project config:
   "failOn": "warning",
   "excludedPaths": ["dist", "generated"],
   "severityOverrides": {
-    "empty-function": "error"
+    "empty-function": "error",
   },
   "penaltyOverrides": {
-    "empty-function": 1
-  }
+    "empty-function": 1,
+  },
 }
 ```
 
